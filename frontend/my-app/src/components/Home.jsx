@@ -1,61 +1,98 @@
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Signin from '../AlwaysUse/Signin';
 import AddWork from '../AlwaysUse/AddWork';
 
 var count = 0;
 
-
-function Home(){
-  var [Login,setLogin] = useState(false);
-  var [LoginData,setLoginData] = useState({Name:"",Email:"",Password:"" });
-  var [Work,setWork] = useState(false);  
+function Home() {
+  var [Login, setLogin] = useState(false);
+  var [LoginData, setLoginData] = useState({ Name: "", Email: "", Password: "" });
+  var [Work, setWork] = useState(false);
 
   useEffect(() => {
-    if(Login) count++;
-    console.log(count);
+    if (Login) count++;
   }, [Login]);
 
-   return(
+  return (
     <>
-     <div className={`${(Login && count === 0) ? 'blur-sm pointer-events-none select-none' : ''}`}>
-       <div className='flex justify-center mt-10'>
-        <img className=' h-10 w-10 rounded-full bg-amber-50'
-        src="#" />
-        ,<button className='w-2xl bg-amber-200 rounded-md'
-        onClick={() => {
-          setLogin(true);
-          if (!Work) setWork(true);
-        }}>
-        Add Work</button>
-       </div>
-     <div className='flex mt-10 justify-evenly box-border rounded-md h-96 w-full'>
-      <div className='border-2 border-black rounded-md h-96 w-1/5'>
-          <div>
-              <p>Profile</p>
+      <div className="max-w-7xl mx-auto flex gap-6 px-4">
+        {/* Left Sidebar */}
+        <div className="w-1/5 mt-6 space-y-4">
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h2 className="font-bold text-lg">Main</h2>
+            <p>Your profile details here</p>
           </div>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h2 className="font-bold text-lg">More</h2>
+            <p>Your connections & updates</p>
+          </div>
+        </div>
+
+        {/* Feed */}
+        <div className="flex-1 mt-6 space-y-4">
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h2 className="font-bold text-lg mb-2">Start a post</h2>
+            <textarea
+              className="w-full border rounded-md p-2 focus:outline-none"
+              placeholder="What do you want to talk about?"
+            />
+            <button
+              className="bg-blue-600 text-white px-4 py-2 rounded-md mt-2"
+              onClick={() => {
+                setLogin(true);
+                if (!Work) setWork(true);
+              }}
+            >
+              Add Work
+            </button>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h2 className="font-bold text-lg mb-2">Feed</h2>
+            <p>Your latest posts and network updates will appear here.</p>
+          </div>
+        </div>
+
+        {/* Right Sidebar */}
+        <div className="w-1/4 mt-6 space-y-4">
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h2 className="font-bold text-lg">Suggestions</h2>
+            <p>People you may know</p>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h2 className="font-bold text-lg">Trending</h2>
+            <p>Trending topics & hashtags</p>
+          </div>
+        </div>
       </div>
-      <div className='border-2 border-black rounded-md h-96 w-1/5'>
-        <p>Network</p>
-      </div>
-      <div className='border-2 border-black rounded-md h-96 w-1/5'>
-        <p>Extra</p>
-      </div>
-    </div>
-     </div>
-    {(Login && count === 0) &&
-      <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
-          <button className='absolute top-10 right-10 cursor-pointer bg-red-500 rounded-md min-w-5 min-h-5'
-          onClick={() => setLogin(false)}>
-            X</button>
-        <Signin setLoginData={setLoginData} setWork ={setWork}/>
-      </div>
-    }
-    {(Work && count !== 0) && <div className='fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50'>
-    <button className='absolute top-10 right-10 cursor-pointer bg-red-500 rounded-md min-w-5 min-h-5'
-        onClick={() => setWork(false)}>X</button>
-    <AddWork setWork={setWork}/>
-    </div>}
+
+      {/* Sign In Modal */}
+      {(Login && count === 0) && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+          <button
+            className="absolute top-10 right-10 cursor-pointer bg-red-500 rounded-md p-2"
+            onClick={() => setLogin(false)}
+          >
+            X
+          </button>
+          <Signin setLoginData={setLoginData} setWork={setWork} />
+        </div>
+      )}
+
+      {/* Add Work Modal */}
+      {(Work && count !== 0) && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+          <button
+            className="absolute top-10 right-10 cursor-pointer bg-red-500 rounded-md p-2"
+            onClick={() => setWork(false)}
+          >
+            X
+          </button>
+          <AddWork setWork={setWork} />
+        </div>
+      )}
     </>
-  )}
+  );
+}
 
 export default Home;

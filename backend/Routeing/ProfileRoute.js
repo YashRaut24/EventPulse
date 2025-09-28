@@ -33,3 +33,5 @@ router.post("/save", async (req, res) => {
     await client.close();
   }
 });
+
+module.exports = router;

@@ -30,10 +30,9 @@ function Home() {
       {/* Stats Section */}
       <StatsSection />
       
-      {/* Interactive Dashboard Section */}
+      {/* Interactive Dashboard Section
       <section className="py-20 bg-gradient-to-b from-black to-gray-900">
         <div className="max-w-7xl mx-auto flex gap-6 px-4">
-          {/* Left Sidebar */}
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -50,7 +49,6 @@ function Home() {
             </div>
           </motion.div>
 
-          {/* Main Feed */}
           <motion.div 
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -102,7 +100,6 @@ function Home() {
             </div>
           </motion.div>
 
-          {/* Right Sidebar */}
           <motion.div 
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -119,7 +116,7 @@ function Home() {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       {/* Footer */}
       <Footer />

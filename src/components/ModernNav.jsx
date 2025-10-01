@@ -17,8 +17,8 @@ const ModernNav = ({ setShowAuthModal }) => {
 
   const navItems = [
     { name: 'Home', path: '/' },
-    { name: 'Connect', path: '/components/Networks' },
-    { name: 'Profile', path: '/components/Me' }
+    // { name: 'Connect', path: '/components/Networks' },
+    // { name: 'Profile', path: '/components/Me' }
   ];
 
   return (

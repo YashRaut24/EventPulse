@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star, Send, MessageSquare, TrendingUp, Award } from 'lucide-react';
+import { Star, Send, MessageSquare, TrendingUp, Award, Mail, Phone } from 'lucide-react';
 import Signin from '../AlwaysUse/Signin';
 import AddWork from '../AlwaysUse/AddWork';
 import HeroSection from './HeroSection';
@@ -19,17 +19,21 @@ function Home() {
   useEffect(() => {
     if (Login) count++;
   }, [Login]);
-const [rating, setRating] = useState(0);
+ const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [category, setCategory] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
 
   const handleSubmit = () => {
-    console.log({ rating, feedback, category });
+    console.log({ rating, feedback, category, email, phone });
     alert('Thank you for your feedback! We appreciate your input.');
     setRating(0);
     setFeedback('');
     setCategory('');
+    setEmail('');
+    setPhone('');
   };
   return (
     <>
@@ -130,7 +134,7 @@ const [rating, setRating] = useState(0);
         </div>
       </section> */}
 
-<section className="py-20 bg-gradient-to-b from-black to-gray-900">
+  <section className="py-20 bg-gradient-to-b from-black to-gray-900">
       <div className="max-w-7xl mx-auto flex gap-6 px-4">
         {/* Left Sidebar */}
         <motion.div 
@@ -148,6 +152,11 @@ const [rating, setRating] = useState(0);
             <Award className="w-6 h-6 text-purple-400 mb-2" />
             <h2 className="font-bold text-lg text-white mb-2">Community</h2>
             <p className="text-gray-300 text-sm">Join our feedback champions</p>
+          </div>
+          <div className="bg-white/10 backdrop-blur-lg p-4 rounded-2xl shadow-xl border border-white/20">
+            <Mail className="w-6 h-6 text-cyan-400 mb-2" />
+            <h2 className="font-bold text-lg text-white mb-2">Stay Connected</h2>
+            <p className="text-gray-300 text-sm mb-3">We value your feedback and may reach out for follow-up</p>
           </div>
         </motion.div>
 
@@ -188,11 +197,41 @@ const [rating, setRating] = useState(0);
               </div>
             </div>
 
+            {/* Email Input */}
+            <div className="mb-6">
+              <label className="text-white font-semibold mb-3 block">Your Email Address</label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="email"
+                  className="w-full bg-white/5 border border-white/20 rounded-xl p-4 pl-12 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 transition-colors"
+                  placeholder="your.email@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Phone Input */}
+            <div className="mb-6">
+              <label className="text-white font-semibold mb-3 block">Your Phone Number</label>
+              <div className="relative">
+                <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="tel"
+                  className="w-full bg-white/5 border border-white/20 rounded-xl p-4 pl-12 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 transition-colors"
+                  placeholder="+91 98765 43210"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
+            </div>
+
             {/* Category Selection */}
             <div className="mb-6">
               <label className="text-white font-semibold mb-3 block">What aspect are you reviewing?</label>
               <div className="flex flex-wrap gap-2">
-                {['Event Organization', 'Analytics', 'Social Media', 'Promotion', 'User Interface'].map((cat) => (
+                {['Event Organization', 'Analytics', 'Social Media', 'Promotion', 'User Interface', 'Event Host Query'].map((cat) => (
                   <motion.button
                     key={cat}
                     whileHover={{ scale: 1.05 }}
@@ -301,7 +340,6 @@ const [rating, setRating] = useState(0);
         </motion.div>
       </div>
     </section>
-
       {/* Footer */}
       
       <Footer />

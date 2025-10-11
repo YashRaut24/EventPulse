@@ -9,6 +9,7 @@ import ModernNav from './components/ModernNav';
 import ParticleSystem from './components/ParticleSystem';
 import Loading3D from './components/Loading3D';
 import Signin from './AlwaysUse/Signin';
+import HomePage from "./components/HomePage";
 
 function App() {
   const [Form, setForm] = useState(false)

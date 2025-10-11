@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Sphere, MeshDistortMaterial, Text, Float, Stars, Environment, Sparkles, Cloud } from '@react-three/drei';
 import { motion } from 'framer-motion';
 import * as THREE from 'three';
-
+import Networks from "./Networks";
 function AnimatedSphere() {
   const meshRef = useRef();
   const [hovered, setHovered] = useState(false);
@@ -134,7 +134,9 @@ const HeroSection = ({ setShowAuthModal }) => {
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <button 
-              onClick={() => setShowAuthModal(true)}
+              onClick={() =>{
+                <Networks/>
+                setShowAuthModal(true)}}
               className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-white font-semibold hover:from-cyan-600 hover:to-blue-600 transform hover:scale-105 transition-all duration-300 shadow-lg"
             >
               Get Started

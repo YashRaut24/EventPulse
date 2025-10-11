@@ -4,6 +4,7 @@ import { OrbitControls, Sphere, Float, Environment, Text } from '@react-three/dr
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, User, Mail, Lock, Sparkles } from 'lucide-react';
 import styled from "styled-components";
+import Networks from "../components/Networks";
 
 // 3D Login Icon Component
 function LoginIcon3D() {
@@ -31,6 +32,7 @@ function LoginIcon3D() {
   );
 }
 
+
 const Form = ({ setLoginData, setWork }) => {
   const [isSignup, setIsSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -42,6 +44,8 @@ const Form = ({ setLoginData, setWork }) => {
     password: "",
     confirmPassword: "",
   });
+
+  const[displayCon,setDisplayCon] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -165,7 +169,7 @@ const Form = ({ setLoginData, setWork }) => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              required
+            
             />
           </motion.div>
         </motion.div>
@@ -191,7 +195,7 @@ const Form = ({ setLoginData, setWork }) => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              required
+              
             />
             <motion.button
               type="button"
@@ -229,7 +233,7 @@ const Form = ({ setLoginData, setWork }) => {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  required
+                  
                 />
                 <motion.button
                   type="button"
@@ -289,6 +293,8 @@ const Form = ({ setLoginData, setWork }) => {
                   className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
                 />
                 <span>Processing...</span>
+                {setDisplayCon(true)}
+          
               </motion.div>
             ) : (
               <motion.span
@@ -327,7 +333,11 @@ const Form = ({ setLoginData, setWork }) => {
             {isSignup ? "Sign In" : "Sign Up"}
           </motion.span>
         </motion.p>
+            
+          {displayCon && <Networks/>}
+      
       </form>
+
     </div>
   );
 };

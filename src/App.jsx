@@ -9,7 +9,8 @@ import ModernNav from './components/ModernNav';
 import ParticleSystem from './components/ParticleSystem';
 import Loading3D from './components/Loading3D';
 import Signin from './AlwaysUse/Signin';
-import HomePage from "./components/HomePage";
+import About from "./components/About";
+import Contact from "./components/Contact";
 
 function App() {
   const [Form, setForm] = useState(false)
@@ -47,6 +48,8 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/components/Networks" element={<Networks />} />
               <Route path='/components/Me' element={<Me />}/>
+              <Route path='/components/About' element={<About />}/>
+              <Route path='/components/Contact' element={<Contact />}/>
             </Routes>
           </div>
           
@@ -76,6 +79,7 @@ function App() {
             </motion.div>
           )}
         </div>
+
       </BrowserRouter>
     </>
   )

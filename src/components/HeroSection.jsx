@@ -4,6 +4,7 @@ import { OrbitControls, Sphere, MeshDistortMaterial, Text, Float, Stars, Environ
 import { motion } from 'framer-motion';
 import * as THREE from 'three';
 import Networks from "./Networks";
+
 function AnimatedSphere() {
   const meshRef = useRef();
   const [hovered, setHovered] = useState(false);
@@ -132,7 +133,7 @@ const HeroSection = ({ setShowAuthModal }) => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
+          > 
             <button 
               onClick={() =>{
                 <Networks/>

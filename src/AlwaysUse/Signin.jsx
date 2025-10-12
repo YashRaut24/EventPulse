@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, User, Mail, Lock, Sparkles } from 'lucide-react';
 import styled from "styled-components";
 import Networks from "../components/Networks";
+import AccountSettings from '../pages/account-settings/index.jsx';
+import { useNavigate } from 'react-router-dom';
 
 // 3D Login Icon Component
 function LoginIcon3D() {
@@ -33,7 +35,7 @@ function LoginIcon3D() {
 }
 
 
-const Form = ({ setLoginData, setWork }) => {
+const Form = ({ setLoginData, setWork, onSignIn }) => {
   const [isSignup, setIsSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -44,6 +46,7 @@ const Form = ({ setLoginData, setWork }) => {
     password: "",
     confirmPassword: "",
   });
+const navigate = useNavigate();
 
   const[displayCon,setDisplayCon] = useState(false);
 
@@ -71,6 +74,9 @@ const Form = ({ setLoginData, setWork }) => {
       console.log("Sign In Data:", formData);
       setLoginData(formData);
       alert("Signed In successfully!");
+        if (onSignIn) onSignIn();  // <-- add this line
+
+      navigate('/account-settings');
     }
     
     setIsLoading(false);
@@ -315,8 +321,9 @@ const Form = ({ setLoginData, setWork }) => {
             }}
             transition={{ duration: 0.4 }}
           />
+          
         </motion.button>
-
+ 
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -332,9 +339,7 @@ const Form = ({ setLoginData, setWork }) => {
             {isSignup ? "Sign In" : "Sign Up"}
           </motion.span>
         </motion.p>
-            
-          {displayCon && <Networks/>}
-      
+                  
       </form>
 
     </div>

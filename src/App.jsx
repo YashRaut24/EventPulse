@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import './App.css'
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ErrorBoundary from "./components/ErrorBoundary";
+import ScrollToTop from "./components/ScrollToTop";
 import Networks from './components/Networks';
 import Home from './components/Home';
 import Me from './components/Me';
@@ -11,78 +13,127 @@ import Loading3D from './components/Loading3D';
 import Signin from './AlwaysUse/Signin';
 import About from "./components/About";
 import Contact from "./components/Contact";
-
+import AccountSettings from './pages/account-settings/index.jsx';
+import SocialMediaMonitoring from './pages/social-media-monitoring/index.jsx';
+import Login from './pages/login/index.jsx';
+import EventDashboard from './pages/event-dashboard/index.jsx';
+import Register from './pages/register/index.jsx';
+import AnalyticsReports from './pages/analytics-reports/index.jsx';
+import NotFound from './pages/NotFound';
+import Header from "./components/ui/Header.jsx";
 function App() {
-  const [Form, setForm] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [showAuthModal, setShowAuthModal] = useState(false)
-  
+  const [isLoading, setIsLoading] = useState(true);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   useEffect(() => {
-    // Simulate initial loading
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 4000)
-    
-    return () => clearTimeout(timer)
-  }, [])
+    const timer = setTimeout(() => setIsLoading(false), 4000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <>
-      {/* 3D Loading Screen */}
-      <Loading3D 
-        isVisible={isLoading} 
-        onComplete={() => setIsLoading(false)} 
-      />
+      <Loading3D isVisible={isLoading} onComplete={() => setIsLoading(false)} />
       
-      <BrowserRouter>
-        <div className="min-h-screen bg-black relative">
-          {/* 3D Particle Background */}
-          <ParticleSystem />
-          
-          {/* Modern Navigation */}
-          <ModernNav setShowAuthModal={setShowAuthModal} />
+     <BrowserRouter>
+  <div className="min-h-screen bg-black relative">
+    <ParticleSystem />
 
-          {/* Content area */}
-          <div className="relative z-10">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/components/Networks" element={<Networks />} />
-              <Route path='/components/Me' element={<Me />}/>
-              <Route path='/components/About' element={<About />}/>
-              <Route path='/components/Contact' element={<Contact />}/>
-            </Routes>
-          </div>
-          
-          {/* Global Auth Modal */}
-          {showAuthModal && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50"
-            >
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="absolute top-10 right-10 cursor-pointer bg-red-500 hover:bg-red-600 rounded-full p-3 text-white transition-colors"
-                onClick={() => setShowAuthModal(false)}
-              >
-                ✕
-              </motion.button>
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: "spring", damping: 15 }}
-              >
-                <Signin />
-              </motion.div>
-            </motion.div>
-          )}
-        </div>
+    <Routes>
+      {/* Public routes */}
+      <Route 
+        path="/" 
+        element={
+          <>
+            <ModernNav setShowAuthModal={setShowAuthModal} />
+            <Home />
+          </>
+        } 
+      />
+      <Route 
+        path="/components/About" 
+        element={
+          <>
+            <ModernNav setShowAuthModal={setShowAuthModal} />
+            <About />
+          </>
+        } 
+      />
+      <Route 
+        path="/components/Contact" 
+        element={
+          <>
+            <ModernNav setShowAuthModal={setShowAuthModal} />
+            <Contact />
+          </>
+        } 
+      />
 
-      </BrowserRouter>
+      {/* Admin routes */}
+      <Route 
+        path="/account-settings" 
+        element={
+          <>
+            <Header />
+            <AccountSettings />
+          </>
+        } 
+      />
+      <Route 
+        path="/social-media-monitoring" 
+        element={
+          <>
+            <Header />
+            <SocialMediaMonitoring />
+          </>
+        } 
+      />
+      <Route 
+        path="/analytics-reports" 
+        element={
+          <>
+            <Header />
+            <AnalyticsReports />
+          </>
+        } 
+      />
+      <Route 
+      path="/event-dashboard" 
+      element={
+      <>
+        <Header />
+        <EventDashboard />
+      </>
+  } 
+/>
+
+
+      {/* Other routes */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+
+    {/* Sign In Modal */}
+    {showAuthModal && !isLoggedIn && (
+      <motion.div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50">
+        <motion.button
+          onClick={() => setShowAuthModal(false)}
+          className="absolute top-10 right-10 bg-red-500 p-3 text-white rounded-full hover:bg-red-600"
+        >
+          ✕
+        </motion.button>
+        <Signin 
+          onSignIn={() => {
+            setIsLoggedIn(true);
+            setShowAuthModal(false);
+          }} 
+        />
+      </motion.div>
+    )}
+  </div>
+</BrowserRouter>
+
     </>
-  )
+  );
 }
 
-export default App
+export default App;

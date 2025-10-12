@@ -394,7 +394,7 @@ function Home() {
             <Signin setLoginData={setLoginData} setWork={setWork} />
           </motion.div>
         </motion.div>
-      )}
+      )} 
 
       {/* Add Work Modal */}
       {(Work && count !== 0) && (

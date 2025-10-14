@@ -81,13 +81,13 @@ const ModernNav = ({ setShowAuthModal, isLoggedIn }) => {
             {!isLoggedIn && (
               <>
                 <motion.button
-                  onClick={() => setShowAuthModal({ visible: true, type: 'signin' })}
+                  onClick={() => setShowAuthModal(true)}
                   className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-full font-semibold hover:from-cyan-600 hover:to-purple-600 transition-all duration-300 shadow-lg"
                 >
                   Sign In
                 </motion.button>
                 <motion.button
-                  onClick={() => setShowAuthModal({ visible: true, type: 'signup' })}
+                  onClick={() => setShowAuthModal(true)}
                   className="px-6 py-3 bg-white text-black rounded-full font-semibold hover:bg-gray-200 transition-all duration-300"
                 >
                   Sign Up
@@ -128,13 +128,13 @@ const ModernNav = ({ setShowAuthModal, isLoggedIn }) => {
               {!isLoggedIn && (
                 <div className="flex flex-col space-y-3 mt-4">
                   <button
-                    onClick={() => setShowAuthModal({ visible: true, type: 'signin' })}
+                    onClick={() => setShowAuthModal(true)}
                     className="w-full px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-full font-semibold"
                   >
                     Sign In
                   </button>
                   <button
-                    onClick={() => setShowAuthModal({ visible: true, type: 'signup' })}
+                    onClick={() => setShowAuthModal(true)}
                     className="w-full px-6 py-3 bg-white text-black rounded-full font-semibold"
                   >
                     Sign Up

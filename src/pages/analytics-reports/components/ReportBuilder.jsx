@@ -1,132 +1,202 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
-import Select from '../../../components/ui/Select';
-import Input from '../../../components/ui/Input';
-import { Checkbox } from '../../../components/ui/Checkbox';
 
 const ReportBuilder = ({ onGenerateReport }) => {
-  const [selectedMetrics, setSelectedMetrics] = useState([]);
-  const [dateRange, setDateRange] = useState({ start: '', end: '' });
-  const [visualizationType, setVisualizationType] = useState('chart');
-  const [reportName, setReportName] = useState('');
+  const [reportConfig, setReportConfig] = useState({
+    name: '',
+    type: 'performance',
+    dateRange: '30d',
+    platforms: [],
+    metrics: [],
+    format: 'pdf'
+  });
 
-  const metricOptions = [
-    { value: 'engagement_rate', label: 'Engagement Rate', description: 'Likes, comments, shares per post' },
-    { value: 'reach', label: 'Reach', description: 'Total unique users reached' },
-    { value: 'impressions', label: 'Impressions', description: 'Total times content was displayed' },
-    { value: 'sentiment_score', label: 'Sentiment Score', description: 'Overall sentiment analysis' },
-    { value: 'follower_growth', label: 'Follower Growth', description: 'New followers gained' },
-    { value: 'click_through_rate', label: 'Click-through Rate', description: 'Clicks per impression' },
-    { value: 'conversion_rate', label: 'Conversion Rate', description: 'Actions completed per click' },
-    { value: 'share_of_voice', label: 'Share of Voice', description: 'Brand mentions vs competitors' }
+  const reportTypes = [
+    { id: 'performance', name: 'Performance Report', description: 'Overall social media performance metrics' },
+    { id: 'engagement', name: 'Engagement Analysis', description: 'Detailed engagement patterns and trends' },
+    { id: 'competitor', name: 'Competitor Analysis', description: 'Compare performance with competitors' },
+    { id: 'roi', name: 'ROI Assessment', description: 'Return on investment analysis' }
   ];
 
-  const visualizationOptions = [
-    { value: 'chart', label: 'Interactive Charts' },
-    { value: 'table', label: 'Data Tables' },
-    { value: 'infographic', label: 'Infographics' },
-    { value: 'dashboard', label: 'Dashboard View' }
-  ];
+  const platforms = ['Twitter', 'Facebook', 'Instagram', 'LinkedIn', 'YouTube'];
+  const metrics = ['Engagement Rate', 'Reach', 'Impressions', 'Clicks', 'Conversions', 'Sentiment'];
+  const formats = ['PDF', 'Excel', 'PowerPoint', 'CSV'];
 
-  const handleMetricChange = (metric, checked) => {
-    if (checked) {
-      setSelectedMetrics([...selectedMetrics, metric]);
-    } else {
-      setSelectedMetrics(selectedMetrics?.filter(m => m !== metric));
+  const handleGenerate = () => {
+    if (onGenerateReport) {
+      onGenerateReport(reportConfig);
     }
   };
 
-  const handleGenerateReport = () => {
-    const reportConfig = {
-      name: reportName,
-      metrics: selectedMetrics,
-      dateRange,
-      visualizationType,
-      timestamp: new Date()?.toISOString()
-    };
-    onGenerateReport(reportConfig);
-  };
-
   return (
-    <div className="bg-card border border-border rounded-lg p-6">
-      <div className="flex items-center space-x-3 mb-6">
-        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-          <Icon name="BarChart3" size={20} className="text-primary" />
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold text-foreground">Report Builder</h3>
-          <p className="text-sm text-muted-foreground">Create custom analytics reports</p>
-        </div>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold text-white mb-2">Report Builder</h2>
+        <p className="text-gray-300">Create custom analytics reports tailored to your needs</p>
       </div>
-      <div className="space-y-6">
-        {/* Report Name */}
-        <Input
-          label="Report Name"
-          type="text"
-          placeholder="Enter report name"
-          value={reportName}
-          onChange={(e) => setReportName(e?.target?.value)}
-          required
-        />
 
-        {/* Date Range */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            label="Start Date"
-            type="date"
-            value={dateRange?.start}
-            onChange={(e) => setDateRange({ ...dateRange, start: e?.target?.value })}
-            required
-          />
-          <Input
-            label="End Date"
-            type="date"
-            value={dateRange?.end}
-            onChange={(e) => setDateRange({ ...dateRange, end: e?.target?.value })}
-            required
-          />
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Report Configuration */}
+        <div className="space-y-6">
+          {/* Report Name */}
+          <div className="bg-black/40 backdrop-blur-lg border border-white/10 rounded-2xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Report Details</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Report Name</label>
+                <input
+                  type="text"
+                  value={reportConfig.name}
+                  onChange={(e) => setReportConfig({...reportConfig, name: e.target.value})}
+                  placeholder="Enter report name..."
+                  className="w-full bg-black/60 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Date Range</label>
+                <select
+                  value={reportConfig.dateRange}
+                  onChange={(e) => setReportConfig({...reportConfig, dateRange: e.target.value})}
+                  className="w-full bg-black/60 border border-white/20 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-400"
+                >
+                  <option value="7d">Last 7 days</option>
+                  <option value="30d">Last 30 days</option>
+                  <option value="3m">Last 3 months</option>
+                  <option value="6m">Last 6 months</option>
+                  <option value="1y">Last year</option>
+                </select>
+              </div>
+            </div>
+          </div>
 
-        {/* Metrics Selection */}
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-3">
-            Select Metrics
-          </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {metricOptions?.map((metric) => (
-              <Checkbox
-                key={metric?.value}
-                label={metric?.label}
-                description={metric?.description}
-                checked={selectedMetrics?.includes(metric?.value)}
-                onChange={(e) => handleMetricChange(metric?.value, e?.target?.checked)}
-              />
-            ))}
+          {/* Report Type */}
+          <div className="bg-black/40 backdrop-blur-lg border border-white/10 rounded-2xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Report Type</h3>
+            <div className="space-y-3">
+              {reportTypes.map((type) => (
+                <motion.label
+                  key={type.id}
+                  whileHover={{ scale: 1.02 }}
+                  className={`flex items-start space-x-3 p-4 border rounded-lg cursor-pointer transition-all ${
+                    reportConfig.type === type.id 
+                      ? 'border-cyan-400 bg-cyan-400/10' 
+                      : 'border-white/20 hover:border-white/40'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="reportType"
+                    value={type.id}
+                    checked={reportConfig.type === type.id}
+                    onChange={(e) => setReportConfig({...reportConfig, type: e.target.value})}
+                    className="mt-1"
+                  />
+                  <div>
+                    <div className="text-white font-medium">{type.name}</div>
+                    <div className="text-gray-400 text-sm">{type.description}</div>
+                  </div>
+                </motion.label>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Visualization Type */}
-        <Select
-          label="Visualization Type"
-          options={visualizationOptions}
-          value={visualizationType}
-          onChange={setVisualizationType}
-          placeholder="Select visualization type"
-        />
+        {/* Platforms and Metrics */}
+        <div className="space-y-6">
+          {/* Platforms */}
+          <div className="bg-black/40 backdrop-blur-lg border border-white/10 rounded-2xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Platforms</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {platforms.map((platform) => (
+                <label key={platform} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={reportConfig.platforms.includes(platform)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setReportConfig({
+                          ...reportConfig,
+                          platforms: [...reportConfig.platforms, platform]
+                        });
+                      } else {
+                        setReportConfig({
+                          ...reportConfig,
+                          platforms: reportConfig.platforms.filter(p => p !== platform)
+                        });
+                      }
+                    }}
+                    className="w-4 h-4 text-cyan-400 bg-black/60 border-white/20 rounded focus:ring-cyan-400"
+                  />
+                  <span className="text-gray-300">{platform}</span>
+                </label>
+              ))}
+            </div>
+          </div>
 
-        {/* Generate Button */}
-        <div className="flex justify-end pt-4">
-          <Button
-            variant="default"
-            onClick={handleGenerateReport}
-            disabled={!reportName || selectedMetrics?.length === 0 || !dateRange?.start || !dateRange?.end}
-            iconName="Play"
-            iconPosition="left"
-          >
-            Generate Report
-          </Button>
+          {/* Metrics */}
+          <div className="bg-black/40 backdrop-blur-lg border border-white/10 rounded-2xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Metrics</h3>
+            <div className="grid grid-cols-1 gap-3">
+              {metrics.map((metric) => (
+                <label key={metric} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={reportConfig.metrics.includes(metric)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setReportConfig({
+                          ...reportConfig,
+                          metrics: [...reportConfig.metrics, metric]
+                        });
+                      } else {
+                        setReportConfig({
+                          ...reportConfig,
+                          metrics: reportConfig.metrics.filter(m => m !== metric)
+                        });
+                      }
+                    }}
+                    className="w-4 h-4 text-cyan-400 bg-black/60 border-white/20 rounded focus:ring-cyan-400"
+                  />
+                  <span className="text-gray-300">{metric}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Export Format */}
+          <div className="bg-black/40 backdrop-blur-lg border border-white/10 rounded-2xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Export Format</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {formats.map((format) => (
+                <label key={format} className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="format"
+                    value={format.toLowerCase()}
+                    checked={reportConfig.format === format.toLowerCase()}
+                    onChange={(e) => setReportConfig({...reportConfig, format: e.target.value})}
+                  />
+                  <span className="text-gray-300">{format}</span>
+                </label>
+              ))}
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* Generate Button */}
+      <div className="flex justify-end">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleGenerate}
+          className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg font-semibold hover:from-cyan-600 hover:to-purple-600 transition-all duration-300 flex items-center space-x-2"
+        >
+          <Icon name="FileText" size={20} />
+          <span>Generate Report</span>
+        </motion.button>
       </div>
     </div>
   );

@@ -2,6 +2,26 @@ import React from 'react';
 import Button from '../../../components/ui/Button';
 
 const QuickActions = ({ onCreateCampaign, onGenerateReport, onConfigureAlerts, onViewAnalytics }) => {
+  const handleCreateCampaign = () => {
+    alert('Creating new social media campaign...');
+    if (onCreateCampaign) onCreateCampaign();
+  };
+
+  const handleGenerateReport = () => {
+    alert('Generating analytics report...');
+    if (onGenerateReport) onGenerateReport();
+  };
+
+  const handleConfigureAlerts = () => {
+    alert('Opening alert configuration...');
+    if (onConfigureAlerts) onConfigureAlerts();
+  };
+
+  const handleViewAnalytics = () => {
+    window.location.href = '/analytics-reports';
+    if (onViewAnalytics) onViewAnalytics();
+  };
+
   const actions = [
     {
       id: 'create-campaign',
@@ -9,7 +29,7 @@ const QuickActions = ({ onCreateCampaign, onGenerateReport, onConfigureAlerts, o
       description: 'Launch new social media campaign',
       icon: 'Plus',
       variant: 'default',
-      onClick: onCreateCampaign
+      onClick: handleCreateCampaign
     },
     {
       id: 'generate-report',
@@ -17,7 +37,7 @@ const QuickActions = ({ onCreateCampaign, onGenerateReport, onConfigureAlerts, o
       description: 'Export analytics data',
       icon: 'FileText',
       variant: 'outline',
-      onClick: onGenerateReport
+      onClick: handleGenerateReport
     },
     {
       id: 'configure-alerts',
@@ -25,7 +45,7 @@ const QuickActions = ({ onCreateCampaign, onGenerateReport, onConfigureAlerts, o
       description: 'Set up notifications',
       icon: 'Bell',
       variant: 'outline',
-      onClick: onConfigureAlerts
+      onClick: handleConfigureAlerts
     },
     {
       id: 'view-analytics',
@@ -33,7 +53,7 @@ const QuickActions = ({ onCreateCampaign, onGenerateReport, onConfigureAlerts, o
       description: 'Detailed performance insights',
       icon: 'BarChart3',
       variant: 'secondary',
-      onClick: onViewAnalytics
+      onClick: handleViewAnalytics
     }
   ];
 

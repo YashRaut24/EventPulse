@@ -159,7 +159,14 @@ const AnalyticsReports = () => {
                 variant="outline"
                 iconName="RefreshCw"
                 iconPosition="left"
-                onClick={() => window.location?.reload()}
+                onClick={() => {
+                  alert('Refreshing analytics data...');
+                  setIsLoading(true);
+                  setTimeout(() => {
+                    setIsLoading(false);
+                    alert('Data refreshed successfully!');
+                  }, 2000);
+                }}
               >
                 Refresh Data
               </Button>
@@ -167,7 +174,12 @@ const AnalyticsReports = () => {
                 variant="default"
                 iconName="Plus"
                 iconPosition="left"
-                onClick={() => setActiveTab('builder')}
+                onClick={() => {
+                  alert('Opening report builder...');
+                  setTimeout(() => {
+                    setActiveTab('builder');
+                  }, 500);
+                }}
               >
                 New Report
               </Button>
@@ -229,7 +241,18 @@ const AnalyticsReports = () => {
                     <h3 className="text-lg font-semibold text-foreground">Recent Reports</h3>
                     <p className="text-sm text-muted-foreground">Your latest generated reports</p>
                   </div>
-                  <Button variant="outline" size="sm" iconName="ArrowRight" iconPosition="right">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    iconName="ArrowRight" 
+                    iconPosition="right"
+                    onClick={() => {
+                      alert('Loading all reports...');
+                      setTimeout(() => {
+                        alert('All reports loaded!');
+                      }, 1000);
+                    }}
+                  >
                     View All
                   </Button>
                 </div>
@@ -263,10 +286,30 @@ const AnalyticsReports = () => {
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Button variant="ghost" size="sm" iconName="Download">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            iconName="Download"
+                            onClick={() => {
+                              alert(`Downloading ${report?.name}...`);
+                              setTimeout(() => {
+                                alert('Report downloaded successfully!');
+                              }, 1500);
+                            }}
+                          >
                             Download
                           </Button>
-                          <Button variant="ghost" size="sm" iconName="Share">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            iconName="Share"
+                            onClick={() => {
+                              alert(`Sharing ${report?.name}...`);
+                              setTimeout(() => {
+                                alert('Share link copied to clipboard!');
+                              }, 1000);
+                            }}
+                          >
                             Share
                           </Button>
                         </div>

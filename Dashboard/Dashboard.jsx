@@ -135,7 +135,7 @@ function Dashboard() {
       <div className="dashboard-header">
         <div className="header-content">
           <div className="welcome-section">
-            <h1 className="dashboard-title">Welcome back, John! 👋</h1>
+            <h1 className="dashboard-title">Welcome back, Sir! 👋</h1>
             <p className="dashboard-subtitle">
               {formatDate(currentTime)} • {formatTime(currentTime)}
             </p>

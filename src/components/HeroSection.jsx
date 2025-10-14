@@ -135,9 +135,7 @@ const HeroSection = ({ setShowAuthModal }) => {
             className="flex flex-col sm:flex-row gap-4 justify-center"
           > 
             <button 
-              onClick={() =>{
-                <Networks/>
-                setShowAuthModal(true)}}
+              onClick={() => setShowAuthModal(true)}
               className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full text-white font-semibold hover:from-cyan-600 hover:to-blue-600 transform hover:scale-105 transition-all duration-300 shadow-lg"
             >
               Get Started

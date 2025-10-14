@@ -1,123 +1,94 @@
 import React, { useState } from 'react';
-import Button from '../../../components/ui/Button';
+import { motion, AnimatePresence } from 'framer-motion';
 import Icon from '../../../components/AppIcon';
 
-const DateRangePicker = ({ onDateRangeChange, className = '' }) => {
-  const [selectedRange, setSelectedRange] = useState('7d');
-  const [isCustomOpen, setIsCustomOpen] = useState(false);
-  const [customStartDate, setCustomStartDate] = useState('');
-  const [customEndDate, setCustomEndDate] = useState('');
+const DateRangePicker = ({ onDateRangeChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedRange, setSelectedRange] = useState('Last 7 days');
 
-  const predefinedRanges = [
-    { value: '1d', label: 'Last 24 hours', days: 1 },
-    { value: '7d', label: 'Last 7 days', days: 7 },
-    { value: '30d', label: 'Last 30 days', days: 30 },
-    { value: '90d', label: 'Last 90 days', days: 90 },
-    { value: 'custom', label: 'Custom Range', days: null }
+  const dateRanges = [
+    { label: 'Last 7 days', value: '7d' },
+    { label: 'Last 30 days', value: '30d' },
+    { label: 'Last 3 months', value: '3m' },
+    { label: 'Last 6 months', value: '6m' },
+    { label: 'Last year', value: '1y' },
+    { label: 'Custom range', value: 'custom' }
   ];
 
   const handleRangeSelect = (range) => {
-    setSelectedRange(range?.value);
+    setSelectedRange(range.label);
+    setIsOpen(false);
     
-    if (range?.value === 'custom') {
-      setIsCustomOpen(true);
-      return;
-    }
-    
-    setIsCustomOpen(false);
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate?.setDate(endDate?.getDate() - range?.days);
-    
-    onDateRangeChange({
-      startDate: startDate?.toISOString()?.split('T')?.[0],
-      endDate: endDate?.toISOString()?.split('T')?.[0],
-      label: range?.label
-    });
-  };
-
-  const handleCustomApply = () => {
-    if (customStartDate && customEndDate) {
+    if (onDateRangeChange) {
       onDateRangeChange({
-        startDate: customStartDate,
-        endDate: customEndDate,
-        label: `${customStartDate} to ${customEndDate}`
+        label: range.label,
+        value: range.value,
+        startDate: getStartDate(range.value),
+        endDate: new Date().toISOString().split('T')[0]
       });
-      setIsCustomOpen(false);
     }
   };
 
-  const getCurrentRangeLabel = () => {
-    const range = predefinedRanges?.find(r => r?.value === selectedRange);
-    return range ? range?.label : 'Custom Range';
+  const getStartDate = (value) => {
+    const now = new Date();
+    switch (value) {
+      case '7d':
+        return new Date(now.setDate(now.getDate() - 7)).toISOString().split('T')[0];
+      case '30d':
+        return new Date(now.setDate(now.getDate() - 30)).toISOString().split('T')[0];
+      case '3m':
+        return new Date(now.setMonth(now.getMonth() - 3)).toISOString().split('T')[0];
+      case '6m':
+        return new Date(now.setMonth(now.getMonth() - 6)).toISOString().split('T')[0];
+      case '1y':
+        return new Date(now.setFullYear(now.getFullYear() - 1)).toISOString().split('T')[0];
+      default:
+        return new Date(now.setDate(now.getDate() - 7)).toISOString().split('T')[0];
+    }
   };
 
   return (
-    <div className={`bg-card border border-border rounded-lg p-4 shadow-soft ${className}`}>
-      <div className="flex items-center space-x-3 mb-3">
-        <div className="w-8 h-8 bg-secondary/10 rounded-lg flex items-center justify-center">
-          <Icon name="CalendarDays" size={16} className="text-secondary" />
+    <div className="relative">
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full bg-black/40 backdrop-blur-lg border border-white/10 rounded-2xl p-6 text-left hover:border-cyan-400/30 transition-all duration-300"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-1">Date Range</h3>
+            <p className="text-gray-300 text-sm">{selectedRange}</p>
+          </div>
+          <Icon 
+            name={isOpen ? "ChevronUp" : "ChevronDown"} 
+            size={20} 
+            className="text-gray-400" 
+          />
         </div>
-        <div>
-          <h3 className="text-sm font-medium text-foreground">Date Range</h3>
-          <p className="text-xs text-muted-foreground">{getCurrentRangeLabel()}</p>
-        </div>
-      </div>
-      <div className="space-y-2">
-        {predefinedRanges?.map((range) => (
-          <button
-            key={range?.value}
-            onClick={() => handleRangeSelect(range)}
-            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-standard ${
-              selectedRange === range?.value
-                ? 'bg-primary text-primary-foreground'
-                : 'text-foreground hover:bg-muted'
-            }`}
+      </motion.button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute top-full left-0 right-0 mt-2 bg-black/90 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl z-50 overflow-hidden"
           >
-            {range?.label}
-          </button>
-        ))}
-      </div>
-      {isCustomOpen && (
-        <div className="mt-4 pt-4 border-t border-border space-y-3">
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-foreground">Start Date</label>
-            <input
-              type="date"
-              value={customStartDate}
-              onChange={(e) => setCustomStartDate(e?.target?.value)}
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-foreground">End Date</label>
-            <input
-              type="date"
-              value={customEndDate}
-              onChange={(e) => setCustomEndDate(e?.target?.value)}
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-          </div>
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsCustomOpen(false)}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handleCustomApply}
-              className="flex-1"
-            >
-              Apply
-            </Button>
-          </div>
-        </div>
-      )}
+            {dateRanges.map((range) => (
+              <motion.button
+                key={range.value}
+                whileHover={{ backgroundColor: 'rgba(6, 182, 212, 0.1)' }}
+                onClick={() => handleRangeSelect(range)}
+                className="w-full p-4 text-left border-b border-white/5 last:border-b-0 transition-colors"
+              >
+                <span className="text-white">{range.label}</span>
+              </motion.button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

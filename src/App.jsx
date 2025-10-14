@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './contexts/AuthContext.jsx';
 import ErrorBoundary from "./components/ErrorBoundary";
 import ScrollToTop from "./components/ScrollToTop";
 import Networks from './components/Networks';
@@ -24,12 +25,16 @@ import Header from "./components/ui/Header.jsx";
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isAuthenticated, loading: authLoading } = useAuth();
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 4000);
     return () => clearTimeout(timer);
   }, []);
+
+  if (authLoading) {
+    return <Loading3D isVisible={true} />;
+  }
 
   return (
     <>
@@ -44,17 +49,19 @@ function App() {
       <Route 
         path="/" 
         element={
-          <>
-            <ModernNav setShowAuthModal={setShowAuthModal} />
-            <Home />
-          </>
+          isAuthenticated ? <Navigate to="/event-dashboard" /> : (
+            <>
+              <ModernNav setShowAuthModal={setShowAuthModal} isLoggedIn={isAuthenticated} />
+              <Home />
+            </>
+          )
         } 
       />
       <Route 
         path="/components/About" 
         element={
           <>
-            <ModernNav setShowAuthModal={setShowAuthModal} />
+            <ModernNav setShowAuthModal={setShowAuthModal} isLoggedIn={isAuthenticated} />
             <About />
           </>
         } 
@@ -63,49 +70,57 @@ function App() {
         path="/components/Contact" 
         element={
           <>
-            <ModernNav setShowAuthModal={setShowAuthModal} />
+            <ModernNav setShowAuthModal={setShowAuthModal} isLoggedIn={isAuthenticated} />
             <Contact />
           </>
         } 
       />
 
-      {/* Admin routes */}
+      {/* Protected routes */}
       <Route 
         path="/account-settings" 
         element={
-          <>
-            <Header />
-            <AccountSettings />
-          </>
+          isAuthenticated ? (
+            <>
+              <Header />
+              <AccountSettings />
+            </>
+          ) : <Navigate to="/" />
         } 
       />
       <Route 
         path="/social-media-monitoring" 
         element={
-          <>
-            <Header />
-            <SocialMediaMonitoring />
-          </>
+          isAuthenticated ? (
+            <>
+              <Header />
+              <SocialMediaMonitoring />
+            </>
+          ) : <Navigate to="/" />
         } 
       />
       <Route 
         path="/analytics-reports" 
         element={
-          <>
-            <Header />
-            <AnalyticsReports />
-          </>
+          isAuthenticated ? (
+            <>
+              <Header />
+              <AnalyticsReports />
+            </>
+          ) : <Navigate to="/" />
         } 
       />
       <Route 
-      path="/event-dashboard" 
-      element={
-      <>
-        <Header />
-        <EventDashboard />
-      </>
-  } 
-/>
+        path="/event-dashboard" 
+        element={
+          isAuthenticated ? (
+            <>
+              <Header />
+              <EventDashboard />
+            </>
+          ) : <Navigate to="/" />
+        } 
+      />
 
 
       {/* Other routes */}
@@ -113,7 +128,7 @@ function App() {
     </Routes>
 
     {/* Sign In Modal */}
-    {showAuthModal && !isLoggedIn && (
+    {showAuthModal && !isAuthenticated && (
       <motion.div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50">
         <motion.button
           onClick={() => setShowAuthModal(false)}
@@ -122,10 +137,7 @@ function App() {
           ✕
         </motion.button>
         <Signin 
-          onSignIn={() => {
-            setIsLoggedIn(true);
-            setShowAuthModal(false);
-          }} 
+          onClose={() => setShowAuthModal(false)}
         />
       </motion.div>
     )}

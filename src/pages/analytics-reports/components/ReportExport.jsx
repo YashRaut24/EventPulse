@@ -1,237 +1,145 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
-import Select from '../../../components/ui/Select';
-import Input from '../../../components/ui/Input';
-import { Checkbox } from '../../../components/ui/Checkbox';
 
 const ReportExport = ({ reportData, onExport }) => {
-  const [exportFormat, setExportFormat] = useState('pdf');
-  const [includeCharts, setIncludeCharts] = useState(true);
-  const [includeRawData, setIncludeRawData] = useState(false);
-  const [scheduledDelivery, setScheduledDelivery] = useState(false);
-  const [deliveryFrequency, setDeliveryFrequency] = useState('weekly');
-  const [recipientEmails, setRecipientEmails] = useState('');
+  const [exportConfig, setExportConfig] = useState({
+    format: 'pdf',
+    includeCharts: true,
+    includeRawData: false,
+    emailRecipients: '',
+    schedule: 'none'
+  });
 
-  const formatOptions = [
-    { value: 'pdf', label: 'PDF Report', description: 'Professional formatted document' },
-    { value: 'excel', label: 'Excel Spreadsheet', description: 'Data with charts and tables' },
-    { value: 'csv', label: 'CSV Data', description: 'Raw data for analysis' },
-    { value: 'powerpoint', label: 'PowerPoint', description: 'Presentation ready slides' }
-  ];
-
-  const frequencyOptions = [
-    { value: 'daily', label: 'Daily' },
-    { value: 'weekly', label: 'Weekly' },
-    { value: 'monthly', label: 'Monthly' },
-    { value: 'quarterly', label: 'Quarterly' }
-  ];
-
-  const scheduledReports = [
-    {
-      id: 1,
-      name: 'Weekly Performance Report',
-      format: 'PDF',
-      frequency: 'Weekly',
-      nextDelivery: '2025-09-30',
-      recipients: 3,
-      status: 'active'
-    },
-    {
-      id: 2,
-      name: 'Monthly ROI Analysis',
-      format: 'Excel',
-      frequency: 'Monthly',
-      nextDelivery: '2025-10-01',
-      recipients: 5,
-      status: 'active'
-    },
-    {
-      id: 3,
-      name: 'Competitor Benchmark',
-      format: 'PowerPoint',
-      frequency: 'Quarterly',
-      nextDelivery: '2025-12-01',
-      recipients: 2,
-      status: 'paused'
-    }
+  const formats = [
+    { id: 'pdf', name: 'PDF Report', description: 'Professional formatted report', icon: 'FileText' },
+    { id: 'excel', name: 'Excel Spreadsheet', description: 'Data with charts and tables', icon: 'FileSpreadsheet' },
+    { id: 'powerpoint', name: 'PowerPoint', description: 'Presentation ready slides', icon: 'Presentation' },
+    { id: 'csv', name: 'CSV Data', description: 'Raw data export', icon: 'Database' }
   ];
 
   const handleExport = () => {
-    const exportConfig = {
-      format: exportFormat,
-      includeCharts,
-      includeRawData,
-      timestamp: new Date()?.toISOString()
-    };
-    onExport(exportConfig);
-  };
-
-  const handleScheduleDelivery = () => {
-    const scheduleConfig = {
-      frequency: deliveryFrequency,
-      recipients: recipientEmails?.split(',')?.map(email => email?.trim()),
-      format: exportFormat,
-      includeCharts,
-      includeRawData
-    };
-    console.log('Scheduling delivery:', scheduleConfig);
+    if (onExport) {
+      onExport(exportConfig);
+    }
   };
 
   return (
     <div className="space-y-6">
-      {/* Export Options */}
-      <div className="bg-card border border-border rounded-lg p-6">
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-            <Icon name="Download" size={20} className="text-accent" />
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">Export Report</h3>
-            <p className="text-sm text-muted-foreground">Download or share your analytics</p>
-          </div>
-        </div>
+      <div>
+        <h2 className="text-2xl font-bold text-white mb-2">Export & Share</h2>
+        <p className="text-gray-300">Export your reports and share with your team</p>
+      </div>
 
-        <div className="space-y-4">
-          <Select
-            label="Export Format"
-            options={formatOptions}
-            value={exportFormat}
-            onChange={setExportFormat}
-            placeholder="Select format"
-          />
-
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Export Format Selection */}
+        <div className="bg-black/40 backdrop-blur-lg border border-white/10 rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Export Format</h3>
           <div className="space-y-3">
-            <label className="block text-sm font-medium text-foreground">
-              Include Options
-            </label>
-            <div className="space-y-2">
-              <Checkbox
-                label="Include Charts & Visualizations"
-                description="Add interactive charts and graphs to the report"
-                checked={includeCharts}
-                onChange={(e) => setIncludeCharts(e?.target?.checked)}
-              />
-              <Checkbox
-                label="Include Raw Data"
-                description="Append raw data tables for detailed analysis"
-                checked={includeRawData}
-                onChange={(e) => setIncludeRawData(e?.target?.checked)}
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            <Button
-              variant="default"
-              onClick={handleExport}
-              iconName="Download"
-              iconPosition="left"
-            >
-              Export Now
-            </Button>
-            <Button
-              variant="outline"
-              iconName="Share"
-              iconPosition="left"
-            >
-              Share Link
-            </Button>
-          </div>
-        </div>
-      </div>
-      {/* Scheduled Delivery */}
-      <div className="bg-card border border-border rounded-lg p-6">
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-            <Icon name="Clock" size={20} className="text-primary" />
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">Scheduled Delivery</h3>
-            <p className="text-sm text-muted-foreground">Automate report distribution</p>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <Checkbox
-            label="Enable Scheduled Delivery"
-            description="Automatically send reports to stakeholders"
-            checked={scheduledDelivery}
-            onChange={(e) => setScheduledDelivery(e?.target?.checked)}
-          />
-
-          {scheduledDelivery && (
-            <div className="space-y-4 pl-6 border-l-2 border-primary/20">
-              <Select
-                label="Delivery Frequency"
-                options={frequencyOptions}
-                value={deliveryFrequency}
-                onChange={setDeliveryFrequency}
-                placeholder="Select frequency"
-              />
-
-              <Input
-                label="Recipient Emails"
-                type="text"
-                placeholder="email1@company.com, email2@company.com"
-                description="Separate multiple emails with commas"
-                value={recipientEmails}
-                onChange={(e) => setRecipientEmails(e?.target?.value)}
-              />
-
-              <Button
-                variant="secondary"
-                onClick={handleScheduleDelivery}
-                iconName="Calendar"
-                iconPosition="left"
+            {formats.map((format) => (
+              <motion.label
+                key={format.id}
+                whileHover={{ scale: 1.02 }}
+                className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all ${
+                  exportConfig.format === format.id 
+                    ? 'border-cyan-400 bg-cyan-400/10' 
+                    : 'border-white/20 hover:border-white/40'
+                }`}
               >
-                Schedule Delivery
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-      {/* Existing Scheduled Reports */}
-      <div className="bg-card border border-border rounded-lg p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">Scheduled Reports</h3>
-            <p className="text-sm text-muted-foreground">Manage automated deliveries</p>
+                <input
+                  type="radio"
+                  name="format"
+                  value={format.id}
+                  checked={exportConfig.format === format.id}
+                  onChange={(e) => setExportConfig({...exportConfig, format: e.target.value})}
+                />
+                <Icon name={format.icon} size={20} className="text-cyan-400" />
+                <div>
+                  <div className="text-white font-medium">{format.name}</div>
+                  <div className="text-gray-400 text-sm">{format.description}</div>
+                </div>
+              </motion.label>
+            ))}
           </div>
-          <Button variant="outline" size="sm" iconName="Plus" iconPosition="left">
-            New Schedule
-          </Button>
         </div>
 
-        <div className="space-y-3">
-          {scheduledReports?.map((report) => (
-            <div key={report?.id} className="flex items-center justify-between p-4 border border-border rounded-lg">
-              <div className="flex-1">
-                <div className="flex items-center space-x-3">
-                  <h4 className="font-medium text-foreground">{report?.name}</h4>
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                    report?.status === 'active' ?'bg-success/10 text-success' :'bg-warning/10 text-warning'
-                  }`}>
-                    {report?.status}
-                  </span>
-                </div>
-                <div className="flex items-center space-x-4 mt-1 text-sm text-muted-foreground">
-                  <span>{report?.format} • {report?.frequency}</span>
-                  <span>Next: {report?.nextDelivery}</span>
-                  <span>{report?.recipients} recipients</span>
-                </div>
+        {/* Export Options */}
+        <div className="space-y-6">
+          <div className="bg-black/40 backdrop-blur-lg border border-white/10 rounded-2xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Export Options</h3>
+            <div className="space-y-4">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={exportConfig.includeCharts}
+                  onChange={(e) => setExportConfig({...exportConfig, includeCharts: e.target.checked})}
+                  className="w-4 h-4 text-cyan-400 bg-black/60 border-white/20 rounded focus:ring-cyan-400"
+                />
+                <span className="text-gray-300">Include charts and visualizations</span>
+              </label>
+              
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={exportConfig.includeRawData}
+                  onChange={(e) => setExportConfig({...exportConfig, includeRawData: e.target.checked})}
+                  className="w-4 h-4 text-cyan-400 bg-black/60 border-white/20 rounded focus:ring-cyan-400"
+                />
+                <span className="text-gray-300">Include raw data tables</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="bg-black/40 backdrop-blur-lg border border-white/10 rounded-2xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Share via Email</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Email Recipients</label>
+                <input
+                  type="text"
+                  value={exportConfig.emailRecipients}
+                  onChange={(e) => setExportConfig({...exportConfig, emailRecipients: e.target.value})}
+                  placeholder="Enter email addresses separated by commas"
+                  className="w-full bg-black/60 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
+                />
               </div>
-              <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="sm" iconName="Edit2">
-                  Edit
-                </Button>
-                <Button variant="ghost" size="sm" iconName="Trash2">
-                  Delete
-                </Button>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Schedule</label>
+                <select
+                  value={exportConfig.schedule}
+                  onChange={(e) => setExportConfig({...exportConfig, schedule: e.target.value})}
+                  className="w-full bg-black/60 border border-white/20 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-400"
+                >
+                  <option value="none">Send once</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
               </div>
             </div>
-          ))}
+          </div>
         </div>
+      </div>
+
+      {/* Export Actions */}
+      <div className="flex justify-end space-x-4">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="px-6 py-3 border border-white/20 text-white rounded-lg hover:border-white/40 transition-colors"
+        >
+          Preview
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleExport}
+          className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg font-semibold hover:from-cyan-600 hover:to-purple-600 transition-all duration-300 flex items-center space-x-2"
+        >
+          <Icon name="Download" size={20} />
+          <span>Export Report</span>
+        </motion.button>
       </div>
     </div>
   );

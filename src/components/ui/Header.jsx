@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext.jsx';
 import Icon from '../AppIcon';
 import Button from './Button';
 
 const Header = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
   const navigationItems = [
     { label: 'Dashboard', path: '/event-dashboard', icon: 'BarChart3' },
@@ -25,21 +28,21 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    // Handle logout logic
-    window.location.href = '/login';
+    signOut();
+    navigate('/');
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-card border-b border-border shadow-soft">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-lg border-b border-white/10">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between h-16 px-6">
           {/* Logo */}
           <div className="flex items-center">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-lg flex items-center justify-center">
                 <Icon name="Zap" size={20} color="white" />
               </div>
-              <span className="text-xl font-semibold text-foreground">EventPulse</span>
+              <span className="text-xl font-semibold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">EventPulse</span>
             </div>
           </div>
 
@@ -49,10 +52,10 @@ const Header = () => {
               <button
                 key={item?.path}
                 onClick={() => handleNavigation(item?.path)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-standard ${
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                   isActivePath(item?.path)
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                    ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white'
+                    : 'text-gray-300 hover:text-white hover:bg-white/10'
                 }`}
               >
                 <Icon name={item?.icon} size={16} />
@@ -65,40 +68,40 @@ const Header = () => {
           <div className="relative">
             <button
               onClick={handleUserMenuToggle}
-              className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted transition-standard"
+              className="flex items-center space-x-3 p-2 rounded-lg hover:bg-white/10 transition-all duration-300"
             >
-              <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full flex items-center justify-center">
                 <Icon name="User" size={16} color="white" />
               </div>
               <div className="hidden sm:block text-left">
-                <div className="text-sm font-medium text-foreground">Shreyas patil</div>
-                <div className="text-xs text-muted-foreground">Event Manager</div>
+                <div className="text-sm font-medium text-white">{user?.firstName} {user?.lastName}</div>
+                <div className="text-xs text-gray-300">{user?.jobTitle || 'Event Manager'}</div>
               </div>
               <Icon 
                 name="ChevronDown" 
                 size={16} 
-                className={`text-muted-foreground transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} 
+                className={`text-gray-300 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} 
               />
             </button>
 
             {/* Dropdown Menu */}
             {isUserMenuOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-popover border border-border rounded-lg shadow-modal z-50">
-                <div className="p-3 border-b border-border">
-                  <div className="text-sm font-medium text-popover-foreground">Shreyas patil</div>
-                  <div className="text-xs text-muted-foreground">shreyaspatil9@gmail.com</div>
+              <div className="absolute right-0 mt-2 w-56 bg-black/90 backdrop-blur-lg border border-white/20 rounded-lg shadow-xl z-50">
+                <div className="p-3 border-b border-white/10">
+                  <div className="text-sm font-medium text-white">{user?.firstName} {user?.lastName}</div>
+                  <div className="text-xs text-gray-300">{user?.email}</div>
                 </div>
                 <div className="py-2">
                   <button
                     onClick={() => handleNavigation('/account-settings')}
-                    className="flex items-center space-x-3 w-full px-3 py-2 text-sm text-popover-foreground hover:bg-muted transition-standard"
+                    className="flex items-center space-x-3 w-full px-3 py-2 text-sm text-white hover:bg-white/10 transition-all duration-300"
                   >
                     <Icon name="Settings" size={16} />
                     <span>Account Settings</span>
                   </button>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center space-x-3 w-full px-3 py-2 text-sm text-destructive hover:bg-muted transition-standard"
+                    className="flex items-center space-x-3 w-full px-3 py-2 text-sm text-red-400 hover:bg-white/10 transition-all duration-300"
                   >
                     <Icon name="LogOut" size={16} />
                     <span>Sign Out</span>

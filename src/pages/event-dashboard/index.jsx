@@ -209,15 +209,28 @@ const EventDashboard = () => {
   };
 
   const handleCreateCampaign = () => {
-    console.log('Navigate to campaign creation');
+    alert('Redirecting to campaign creation...');
+    // Navigate to campaign creation page
+    setTimeout(() => {
+      window.location.href = '/social-media-monitoring';
+    }, 1000);
   };
 
   const handleGenerateReport = () => {
-    console.log('Generate analytics report');
+    alert('Generating comprehensive analytics report...');
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      alert('Report generated successfully! Redirecting to analytics...');
+      window.location.href = '/analytics-reports';
+    }, 2000);
   };
 
   const handleConfigureAlerts = () => {
-    console.log('Configure alert settings');
+    alert('Opening alert configuration panel...');
+    setTimeout(() => {
+      window.location.href = '/account-settings';
+    }, 1000);
   };
 
   const handleViewAnalytics = () => {

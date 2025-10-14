@@ -4,6 +4,7 @@ import { OrbitControls, Sphere, Float, Environment } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext.jsx';
 
 // 3D Sphere Component
 function LoginIcon3D() {
@@ -29,39 +30,52 @@ function LoginIcon3D() {
   );
 }
 
-const Signin = ({ isSignup = false, onSignIn, onSwitchToSignin, setLoginData }) => {
+const Signin = ({ onClose }) => {
   const [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [signupMode, setSignupMode] = useState(isSignup);
+  const [signupMode, setSignupMode] = useState(false);
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
+  const { signIn, signUp } = useAuth();
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
 
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    if (signupMode) {
-      if (formData.password !== formData.confirmPassword) {
-        alert("Passwords do not match!");
-        setIsLoading(false);
-        return;
+    try {
+      if (signupMode) {
+        if (formData.password !== formData.confirmPassword) {
+          setError("Passwords do not match!");
+          setIsLoading(false);
+          return;
+        }
+        
+        const result = await signUp(formData);
+        if (result.success) {
+          alert("Account created successfully!");
+          if (onClose) onClose();
+          navigate('/event-dashboard');
+        } else {
+          setError(result.error || 'Sign up failed');
+        }
+      } else {
+        const result = await signIn({ email: formData.email, password: formData.password });
+        if (result.success) {
+          alert(`Welcome back, ${result.user.firstName}!`);
+          if (onClose) onClose();
+          navigate('/event-dashboard');
+        } else {
+          setError('Invalid email or password');
+        }
       }
-      alert("Signed Up successfully! Please Sign In.");
-      setFormData({ ...formData, password: "", confirmPassword: "" });
-
-      if (onSwitchToSignin) onSwitchToSignin();
-      setSignupMode(false);
-    } else {
-      alert("Signed In successfully!");
-      if (onSignIn) onSignIn(); // Close modal & navigate
-      navigate('/account-settings');
+    } catch (error) {
+      setError('An error occurred. Please try again.');
     }
 
     setIsLoading(false);
@@ -189,10 +203,20 @@ const Signin = ({ isSignup = false, onSignIn, onSwitchToSignin, setLoginData }) 
           {isLoading ? "Processing..." : signupMode ? "Sign Up" : "Sign In"}
         </button>
 
+        {error && (
+          <div className="text-red-400 text-sm text-center mb-4">
+            {error}
+          </div>
+        )}
+
         <p className="text-center text-gray-300">
           {signupMode ? "Already have an account?" : "Don't have an account?"}{" "}
           <span
-            onClick={() => setSignupMode(!signupMode)}
+            onClick={() => {
+              setSignupMode(!signupMode);
+              setError('');
+              setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+            }}
             className="text-cyan-400 cursor-pointer font-semibold hover:underline"
           >
             {signupMode ? "Sign In" : "Sign Up"}

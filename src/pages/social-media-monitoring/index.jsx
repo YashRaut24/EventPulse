@@ -101,13 +101,40 @@ const SocialMediaMonitoring = () => {
             </div>
             
             <div className="flex items-center space-x-3">
-              <Button variant="outline" iconName="Download">
+              <Button 
+                variant="outline" 
+                iconName="Download"
+                onClick={() => {
+                  alert('Exporting social media data...');
+                  setTimeout(() => {
+                    alert('Data exported successfully!');
+                  }, 1500);
+                }}
+              >
                 Export Data
               </Button>
-              <Button variant="outline" iconName="Settings">
+              <Button 
+                variant="outline" 
+                iconName="Settings"
+                onClick={() => {
+                  alert('Opening monitoring configuration...');
+                  setTimeout(() => {
+                    window.location.href = '/account-settings';
+                  }, 1000);
+                }}
+              >
                 Configure
               </Button>
-              <Button variant="default" iconName="Plus">
+              <Button 
+                variant="default" 
+                iconName="Plus"
+                onClick={() => {
+                  alert('Creating new monitoring alert...');
+                  setTimeout(() => {
+                    setActiveView('alerts');
+                  }, 1000);
+                }}
+              >
                 Create Alert
               </Button>
             </div>

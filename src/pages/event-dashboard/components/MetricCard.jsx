@@ -1,48 +1,48 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import Icon from '../../../components/AppIcon';
 
-const MetricCard = ({ title, value, change, changeType, icon, color = 'primary' }) => {
-  const getChangeColor = () => {
-    if (changeType === 'positive') return 'text-success';
-    if (changeType === 'negative') return 'text-error';
-    return 'text-muted-foreground';
+const MetricCard = ({ title, value, change, changeType, icon, color }) => {
+  const getColorClasses = (color) => {
+    switch (color) {
+      case 'primary':
+        return 'bg-cyan-500/10 text-cyan-500';
+      case 'success':
+        return 'bg-green-500/10 text-green-500';
+      case 'secondary':
+        return 'bg-purple-500/10 text-purple-500';
+      case 'warning':
+        return 'bg-yellow-500/10 text-yellow-500';
+      default:
+        return 'bg-gray-500/10 text-gray-500';
+    }
   };
 
-  const getChangeIcon = () => {
-    if (changeType === 'positive') return 'TrendingUp';
-    if (changeType === 'negative') return 'TrendingDown';
-    return 'Minus';
-  };
-
-  const getColorClasses = () => {
-    const colors = {
-      primary: 'bg-primary/10 text-primary',
-      secondary: 'bg-secondary/10 text-secondary',
-      success: 'bg-success/10 text-success',
-      warning: 'bg-warning/10 text-warning',
-      error: 'bg-error/10 text-error'
-    };
-    return colors?.[color] || colors?.primary;
+  const getChangeColor = (changeType) => {
+    return changeType === 'positive' ? 'text-green-500' : 'text-red-500';
   };
 
   return (
-    <div className="bg-card border border-border rounded-lg p-6 shadow-soft hover:shadow-modal transition-standard">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ scale: 1.02, y: -2 }}
+      className="bg-black/40 backdrop-blur-lg border border-white/10 rounded-2xl p-6 hover:border-cyan-400/30 transition-all duration-300"
+    >
       <div className="flex items-center justify-between mb-4">
-        <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${getColorClasses()}`}>
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${getColorClasses(color)}`}>
           <Icon name={icon} size={24} />
         </div>
-        {change && (
-          <div className={`flex items-center space-x-1 ${getChangeColor()}`}>
-            <Icon name={getChangeIcon()} size={16} />
-            <span className="text-sm font-medium">{change}</span>
-          </div>
-        )}
+        <div className={`text-sm font-medium ${getChangeColor(changeType)}`}>
+          {change}
+        </div>
       </div>
+      
       <div className="space-y-1">
-        <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-        <p className="text-2xl font-bold text-foreground">{value}</p>
+        <h3 className="text-2xl font-bold text-white">{value}</h3>
+        <p className="text-gray-300 text-sm">{title}</p>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

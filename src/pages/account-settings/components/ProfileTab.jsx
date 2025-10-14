@@ -1,24 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../../contexts/AuthContext.jsx';
 import Icon from '../../../components/AppIcon';
 import Image from '../../../components/AppImage';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
 
 const ProfileTab = () => {
-  const [profileData, setProfileData] = useState({
-    firstName: "Shreyas",
-    lastName: "Patil",
-    email: "Shreyaspatil9@gmail.com",
-    company: "GroupOfAce.",
-    jobTitle: "Event Marketing Manager",
-    phone: "+91 7282773123",
-    website: "https://GroupOfAce.com",
-    bio: "Experienced event marketing professional with 8+ years in the industry. Specialized in social media analytics and audience engagement strategies."
-  });
-
+  const { user, updateUser } = useAuth();
+  const [profileData, setProfileData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [profileImage, setProfileImage] = useState("https://cdn.motor1.com/images/mgl/W8MAAN/s3/bmw-m4-csl.webp");
+  const [profileImage, setProfileImage] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      setProfileData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        company: user.company || '',
+        jobTitle: user.jobTitle || '',
+        phone: user.phone || '',
+        website: user.website || '',
+        bio: user.bio || ''
+      });
+      setProfileImage(user.profileImage || 'https://via.placeholder.com/150x150?text=User');
+    }
+  }, [user]);
 
   const handleInputChange = (field, value) => {
     setProfileData(prev => ({
@@ -29,10 +37,26 @@ const ProfileTab = () => {
 
   const handleSave = async () => {
     setIsSaving(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    alert('Saving profile changes...');
+    
+    try {
+      // Update user data in context and localStorage
+      const updatedData = {
+        ...profileData,
+        profileImage
+      };
+      updateUser(updatedData);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      setIsEditing(false);
+      alert('Profile updated successfully!');
+    } catch (error) {
+      alert('Error updating profile. Please try again.');
+    }
+    
     setIsSaving(false);
-    setIsEditing(false);
   };
 
   const handleImageUpload = (event) => {
@@ -49,18 +73,18 @@ const ProfileTab = () => {
   return (
     <div className="space-y-8">
       {/* Profile Photo Section */}
-      <div className="bg-card rounded-lg border border-border p-6">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Profile Photo</h3>
+      <div className="bg-black/20 border border-white/10 rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-white mb-4">Profile Photo</h3>
         <div className="flex items-center space-x-6">
           <div className="relative">
-            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-border">
+            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white/20">
               <Image 
                 src={profileImage} 
                 alt="Profile" 
                 className="w-full h-full object-cover"
               />
             </div>
-            <label className="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center cursor-pointer hover:bg-primary/90 transition-standard">
+            <label className="absolute bottom-0 right-0 w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-cyan-600 transition-all duration-300">
               <Icon name="Camera" size={16} color="white" />
               <input 
                 type="file" 
@@ -71,7 +95,7 @@ const ProfileTab = () => {
             </label>
           </div>
           <div className="flex-1">
-            <p className="text-sm text-muted-foreground mb-2">
+            <p className="text-sm text-gray-300 mb-2">
               Upload a professional photo to help others recognize you
             </p>
             <div className="flex space-x-3">
@@ -86,15 +110,26 @@ const ProfileTab = () => {
                   />
                 </label>
               </Button>
-              <Button variant="ghost" size="sm">Remove</Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => {
+                  if (confirm('Are you sure you want to remove your profile photo?')) {
+                    setProfileImage('https://via.placeholder.com/150x150?text=No+Image');
+                    alert('Profile photo removed successfully!');
+                  }
+                }}
+              >
+                Remove
+              </Button>
             </div>
           </div>
         </div>
       </div>
       {/* Personal Information */}
-      <div className="bg-card rounded-lg border border-border p-6">
+      <div className="bg-black/20 border border-white/10 rounded-xl p-6">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-foreground">Personal Information</h3>
+          <h3 className="text-lg font-semibold text-white">Personal Information</h3>
           {!isEditing ? (
             <Button 
               variant="outline" 
@@ -152,8 +187,8 @@ const ProfileTab = () => {
             type="email"
             value={profileData?.email}
             onChange={(e) => handleInputChange('email', e?.target?.value)}
-            disabled={!isEditing}
-            description="This email is used for login and notifications"
+            disabled={true}
+            description="Email cannot be changed for security reasons"
             required
           />
           
@@ -193,7 +228,7 @@ const ProfileTab = () => {
           </div>
           
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-foreground mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Bio
             </label>
             <textarea
@@ -201,26 +236,26 @@ const ProfileTab = () => {
               onChange={(e) => handleInputChange('bio', e?.target?.value)}
               disabled={!isEditing}
               rows={4}
-              className="w-full px-3 py-2 border border-border rounded-lg bg-input text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed resize-none"
+              className="w-full px-3 py-2 border border-white/20 rounded-lg bg-black/60 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed resize-none"
               placeholder="Tell us about yourself and your experience..."
             />
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-gray-300 mt-1">
               {profileData?.bio?.length}/500 characters
             </p>
           </div>
         </div>
       </div>
       {/* Account Status */}
-      <div className="bg-card rounded-lg border border-border p-6">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Account Status</h3>
+      <div className="bg-black/20 border border-white/10 rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-white mb-4">Account Status</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="flex items-center space-x-3 p-4 bg-success/10 rounded-lg border border-success/20">
             <div className="w-10 h-10 bg-success rounded-full flex items-center justify-center">
               <Icon name="CheckCircle" size={20} color="white" />
             </div>
             <div>
-              <p className="font-medium text-foreground">Email Verified</p>
-              <p className="text-sm text-muted-foreground">Verified on Sept 15, 2025</p>
+              <p className="font-medium text-white">Email Verified</p>
+              <p className="text-sm text-gray-300">Verified on Sept 15, 2025</p>
             </div>
           </div>
           
@@ -229,8 +264,8 @@ const ProfileTab = () => {
               <Icon name="Shield" size={20} color="white" />
             </div>
             <div>
-              <p className="font-medium text-foreground">2FA Enabled</p>
-              <p className="text-sm text-muted-foreground">Enhanced security active</p>
+              <p className="font-medium text-white">2FA Enabled</p>
+              <p className="text-sm text-gray-300">Enhanced security active</p>
             </div>
           </div>
           
@@ -239,8 +274,8 @@ const ProfileTab = () => {
               <Icon name="Crown" size={20} color="white" />
             </div>
             <div>
-              <p className="font-medium text-foreground">Pro Plan</p>
-              <p className="text-sm text-muted-foreground">Active until Oct 2025</p>
+              <p className="font-medium text-white">{user?.plan || 'Free'} Plan</p>
+              <p className="text-sm text-gray-300">Member since {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</p>
             </div>
           </div>
         </div>

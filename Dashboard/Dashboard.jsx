@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Calendar, 
   Users, 
@@ -13,21 +13,34 @@ import {
   MoreHorizontal,
   Clock,
   MapPin,
-  Star
+  Star,
+  FileText,
+  BarChart3,
+  Megaphone
 } from 'lucide-react';
 import SmartOverview from './SmartOverview';
 import "./Dashboard.css";
 
 function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [loadingButton, setLoadingButton] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleNavigation = (path, buttonId) => {
+    setLoadingButton(buttonId);
+    setTimeout(() => {
+      navigate(path);
+      setLoadingButton(null);
+    }, 500);
+  };
 
   // Mock data for dashboard
   const mockEvents = [
     {
       id: 1,
-      name: "Tech Conference 2024",
-      date: "2024-12-15",
+      name: "Tech Conference 2025",
+      date: "2025-12-15",
       location: "Mumbai Convention Center",
       attendees: 1247,
       status: "Active",
@@ -36,7 +49,7 @@ function Dashboard() {
     {
       id: 2,
       name: "Marketing Summit",
-      date: "2024-12-22",
+      date: "2025-12-22",
       location: "Delhi Expo Center",
       attendees: 890,
       status: "Planning",
@@ -45,7 +58,7 @@ function Dashboard() {
     {
       id: 3,
       name: "Startup Meetup",
-      date: "2024-11-30",
+      date: "2025-11-30",
       location: "Pune Tech Park",
       attendees: 456,
       status: "Completed",
@@ -57,7 +70,7 @@ function Dashboard() {
     {
       id: 1,
       action: "New registration",
-      event: "Tech Conference 2024",
+      event: "Tech Conference 2025",
       time: "2 minutes ago",
       type: "registration"
     },
@@ -151,14 +164,28 @@ function Dashboard() {
               />
             </div>
             
-            <button className="action-btn secondary">
+            <button 
+              className={`action-btn secondary ${loadingButton === 'filter' ? 'loading' : ''}`}
+              onClick={() => {
+                setLoadingButton('filter');
+                setTimeout(() => {
+                  alert('Filter functionality coming soon!');
+                  setLoadingButton(null);
+                }, 300);
+              }}
+              disabled={loadingButton === 'filter'}
+            >
               <Filter size={18} />
-              Filter
+              {loadingButton === 'filter' ? 'Loading...' : 'Filter'}
             </button>
             
-            <button className="action-btn primary">
+            <button 
+              className={`action-btn primary ${loadingButton === 'create' ? 'loading' : ''}`}
+              onClick={() => handleNavigation('/event-dashboard', 'create')}
+              disabled={loadingButton === 'create'}
+            >
               <Plus size={18} />
-              Create Event
+              {loadingButton === 'create' ? 'Creating...' : 'Create Event'}
             </button>
             
             <div className="notification-bell">
@@ -288,7 +315,13 @@ function Dashboard() {
             </div>
             
             <div className="card-footer">
-              <button className="view-all-btn">View All Events</button>
+              <button 
+                className={`view-all-btn ${loadingButton === 'allEvents' ? 'loading' : ''}`}
+                onClick={() => handleNavigation('/event-dashboard', 'allEvents')}
+                disabled={loadingButton === 'allEvents'}
+              >
+                {loadingButton === 'allEvents' ? 'Loading...' : 'View All Events'}
+              </button>
             </div>
           </div>
 
@@ -319,7 +352,13 @@ function Dashboard() {
             </div>
             
             <div className="card-footer">
-              <button className="view-all-btn">View All Activity</button>
+              <button 
+                className={`view-all-btn ${loadingButton === 'allActivity' ? 'loading' : ''}`}
+                onClick={() => handleNavigation('/analytics-reports', 'allActivity')}
+                disabled={loadingButton === 'allActivity'}
+              >
+                {loadingButton === 'allActivity' ? 'Loading...' : 'View All Activity'}
+              </button>
             </div>
           </div>
         </div>
@@ -328,21 +367,37 @@ function Dashboard() {
         <div className="quick-actions">
           <h3 className="section-title">Quick Actions</h3>
           <div className="actions-grid">
-            <button className="quick-action-btn">
-              <Plus size={24} />
-              <span>Create New Event</span>
+            <button 
+              className={`quick-action-btn ${loadingButton === 'report' ? 'loading' : ''}`}
+              onClick={() => handleNavigation('/analytics-reports', 'report')}
+              disabled={loadingButton === 'report'}
+            >
+              <FileText size={24} />
+              <span>{loadingButton === 'report' ? 'Loading...' : 'Generate Report'}</span>
             </button>
-            <button className="quick-action-btn">
-              <Download size={24} />
-              <span>Export Reports</span>
+            <button 
+              className={`quick-action-btn ${loadingButton === 'analytics' ? 'loading' : ''}`}
+              onClick={() => handleNavigation('/social-media-monitoring?view=analytics', 'analytics')}
+              disabled={loadingButton === 'analytics'}
+            >
+              <BarChart3 size={24} />
+              <span>{loadingButton === 'analytics' ? 'Loading...' : 'View Analytics'}</span>
             </button>
-            <button className="quick-action-btn">
-              <Users size={24} />
-              <span>Manage Attendees</span>
+            <button 
+              className={`quick-action-btn ${loadingButton === 'campaign' ? 'loading' : ''}`}
+              onClick={() => handleNavigation('/social-media-monitoring', 'campaign')}
+              disabled={loadingButton === 'campaign'}
+            >
+              <Megaphone size={24} />
+              <span>{loadingButton === 'campaign' ? 'Loading...' : 'Campaign'}</span>
             </button>
-            <button className="quick-action-btn">
+            <button 
+              className={`quick-action-btn ${loadingButton === 'alerts' ? 'loading' : ''}`}
+              onClick={() => handleNavigation('/social-media-monitoring?view=alerts', 'alerts')}
+              disabled={loadingButton === 'alerts'}
+            >
               <Bell size={24} />
-              <span>Send Notifications</span>
+              <span>{loadingButton === 'alerts' ? 'Loading...' : 'Configure Alerts'}</span>
             </button>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Header from '../../components/ui/Header';
 import Breadcrumbs from '../../components/ui/Breadcrumbs';
 import LoadingOverlay from '../../components/ui/LoadingOverlay';
@@ -13,8 +14,12 @@ import AlertsNotifications from './components/AlertsNotifications';
 import RealTimeIndicator from './components/RealTimeIndicator';
 
 const SocialMediaMonitoring = () => {
+  const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
-  const [activeView, setActiveView] = useState('feed'); // 'feed', 'analytics', 'alerts'
+  const [activeView, setActiveView] = useState(() => {
+    const viewParam = searchParams.get('view');
+    return viewParam && ['feed', 'analytics', 'alerts'].includes(viewParam) ? viewParam : 'feed';
+  }); // 'feed', 'analytics', 'alerts'
   const [filters, setFilters] = useState({
     platforms: 'all',
     sentiment: 'all',
@@ -36,6 +41,14 @@ const SocialMediaMonitoring = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    // Update active view when URL parameters change
+    const viewParam = searchParams.get('view');
+    if (viewParam && ['feed', 'analytics', 'alerts'].includes(viewParam)) {
+      setActiveView(viewParam);
+    }
+  }, [searchParams]);
 
   const handleFiltersChange = (newFilters) => {
     setFilters(newFilters);
@@ -112,30 +125,6 @@ const SocialMediaMonitoring = () => {
                 }}
               >
                 Export Data
-              </Button>
-              <Button 
-                variant="outline" 
-                iconName="Settings"
-                onClick={() => {
-                  alert('Opening monitoring configuration...');
-                  setTimeout(() => {
-                    window.location.href = '/account-settings';
-                  }, 1000);
-                }}
-              >
-                Configure
-              </Button>
-              <Button 
-                variant="default" 
-                iconName="Plus"
-                onClick={() => {
-                  alert('Creating new monitoring alert...');
-                  setTimeout(() => {
-                    setActiveView('alerts');
-                  }, 1000);
-                }}
-              >
-                Create Alert
               </Button>
             </div>
           </div>

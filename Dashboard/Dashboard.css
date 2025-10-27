@@ -119,6 +119,18 @@
   transform: translateY(-2px);
 }
 
+.action-btn.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
 .notification-bell {
   position: relative;
   padding: 0.75rem;
@@ -449,9 +461,19 @@
   transition: all 0.3s ease;
 }
 
-.view-all-btn:hover {
+.view-all-btn:hover:not(:disabled) {
   color: #2563eb;
   text-decoration: underline;
+}
+
+.view-all-btn.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.view-all-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Quick Actions */
@@ -482,10 +504,23 @@
   text-align: center;
 }
 
-.quick-action-btn:hover {
+.quick-action-btn:hover:not(:disabled) {
   transform: translateY(-4px);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   border-color: #3b82f6;
+}
+
+.quick-action-btn.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+  border-color: #94a3b8;
+}
+
+.quick-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 .quick-action-btn span {

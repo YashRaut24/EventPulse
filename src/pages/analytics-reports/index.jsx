@@ -159,14 +159,7 @@ const AnalyticsReports = () => {
                 variant="outline"
                 iconName="RefreshCw"
                 iconPosition="left"
-                onClick={() => {
-                  alert('Refreshing analytics data...');
-                  setIsLoading(true);
-                  setTimeout(() => {
-                    setIsLoading(false);
-                    alert('Data refreshed successfully!');
-                  }, 2000);
-                }}
+                onClick={() => window.location.reload()}
               >
                 Refresh Data
               </Button>

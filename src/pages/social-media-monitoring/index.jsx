@@ -113,19 +113,23 @@ const SocialMediaMonitoring = () => {
               </p>
             </div>
             
-            <div className="flex items-center space-x-3">
-              <Button 
-                variant="outline" 
-                iconName="Download"
-                onClick={() => {
-                  alert('Exporting social media data...');
-                  setTimeout(() => {
-                    alert('Data exported successfully!');
-                  }, 1500);
-                }}
-              >
+            <div className="cursor-pointer flex items-center space-x-3 absolute right-40 ">
+              <a href="./social_media_engagement1.csv" download>
+                <Button 
+                className="cursor-pointer bg-white text-black hover:bg-black hover:text-white"
+                  variant="outline" 
+                  iconName="Download"
+                  onClick={() => {
+                    alert('Exporting social media data...');
+                    setTimeout(() => {
+                      alert('Data exported successfully!');
+                    }, 1500);
+                  }}
+                >
                 Export Data
               </Button>
+              </a>
+             
             </div>
           </div>
 

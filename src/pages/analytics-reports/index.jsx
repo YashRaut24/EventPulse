@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/ui/Header';
 import Breadcrumbs from '../../components/ui/Breadcrumbs';
 import LoadingOverlay from '../../components/ui/LoadingOverlay';
@@ -15,6 +15,13 @@ const AnalyticsReports = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isLoading, setIsLoading] = useState(false);
   const [generatedReport, setGeneratedReport] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+      const handleScroll = () => setIsScrolled(window.scrollY > 50);
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: 'BarChart3' },
@@ -64,7 +71,8 @@ const AnalyticsReports = () => {
       created: '2025-09-23 09:15',
       status: 'completed',
       downloads: 12,
-      format: 'PDF'
+      format: 'PDF',
+      reportName: "./Report1.pdf"
     },
     {
       id: 2,
@@ -73,7 +81,8 @@ const AnalyticsReports = () => {
       created: '2025-09-22 14:30',
       status: 'completed',
       downloads: 8,
-      format: 'Excel'
+      format: 'Excel',
+      reportName: "./Report2.pdf"
     },
     {
       id: 3,
@@ -82,7 +91,8 @@ const AnalyticsReports = () => {
       created: '2025-09-21 11:45',
       status: 'processing',
       downloads: 0,
-      format: 'PowerPoint'
+      format: 'PowerPoint',
+      reportName: "./Report3.pdf"
     },
     {
       id: 4,
@@ -91,7 +101,8 @@ const AnalyticsReports = () => {
       created: '2025-09-20 16:20',
       status: 'completed',
       downloads: 15,
-      format: 'PDF'
+      format: 'PDF',
+      reportName: "./Report3.pdf"
     }
   ];
 
@@ -154,12 +165,13 @@ const AnalyticsReports = () => {
                 Comprehensive social media performance analysis with customizable reporting
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3 mt-4 lg:mt-0">
+            <div className="flex flex-col sm:flex-row gap-3 mt-4 lg:mt-0 absolute right-40 ">
               <Button
                 variant="outline"
                 iconName="RefreshCw"
                 iconPosition="left"
                 onClick={() => window.location.reload()}
+                className="right-40 hover:bg-white hover:text-black"
               >
                 Refresh Data
               </Button>
@@ -173,6 +185,8 @@ const AnalyticsReports = () => {
                     setActiveTab('builder');
                   }, 500);
                 }}
+                className="right-40 bg-white text-black hover:bg-transparent hover:text-white border-white"
+
               >
                 New Report
               </Button>
@@ -266,32 +280,37 @@ const AnalyticsReports = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="text-right">
-                          <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                      <div className="flex items-center space-x-30">
+                        <div className="text-right absolute right-70">
+                          <div className={`inline-flex items-center px-0 py-1 rounded-full text-xs font-medium ${
                             report?.status === 'completed' 
                               ? 'bg-success/10 text-success' :'bg-warning/10 text-warning'
                           }`}>
                             {report?.status}
                           </div>
-                          <div className="text-xs text-muted-foreground mt-1">
+                          <div className="text-xs text-muted-foreground mt-1 ">
                             {report?.downloads} downloads
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            iconName="Download"
-                            onClick={() => {
-                              alert(`Downloading ${report?.name}...`);
-                              setTimeout(() => {
-                                alert('Report downloaded successfully!');
-                              }, 1500);
-                            }}
-                          >
-                            Download
-                          </Button>
+                        <div className="flex items-center space-x-2  ">
+                              <a href={`/reports/${report.reportName}`} download>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                iconName="Download"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => {
+                                  alert(`Downloading ${report?.name}...`);
+                                  setTimeout(() => {
+                                    alert('Report downloaded successfully!');
+                                  }, 1500);
+                                }}
+                              >
+                                Download
+                              </Button>
+                            </a>                         
+                         
                           <Button 
                             variant="ghost" 
                             size="sm" 

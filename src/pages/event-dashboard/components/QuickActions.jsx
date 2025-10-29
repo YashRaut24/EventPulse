@@ -62,16 +62,16 @@ const QuickActions = ({ onCreateCampaign, onGenerateReport, onConfigureAlerts, o
       <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {actions?.map((action) => (
-          <div key={action?.id} className="group">
+          <div key={action?.id} className="group"  onClick={action?.onClick}>
             <Button
               variant={action?.variant}
               fullWidth
               iconName={action?.icon}
               iconPosition="left"
-              onClick={action?.onClick}
+             
               className="h-auto p-4 flex-col items-start text-left"
             >
-              <div className="w-full">
+              <div className="w-7xs">
                 <div className="font-medium text-sm mb-1">{action?.label}</div>
                 <div className="text-xs opacity-75">{action?.description}</div>
               </div>

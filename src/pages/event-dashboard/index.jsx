@@ -265,14 +265,15 @@ const EventDashboard = () => {
 
           {/* Controls Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div className="lg:col-span-2">
-              <EventSelector
-                events={events}
-                selectedEvent={selectedEvent}
-                onEventChange={handleEventChange}
-              />
-            </div>
-            <DateRangePicker onDateRangeChange={handleDateRangeChange} />
+            <div className="lg:col-span-2 bg-gray-800 bg-opacity-80 rounded-2xl">
+  <EventSelector
+    events={events}
+    selectedEvent={selectedEvent}
+    onEventChange={handleEventChange}
+  />
+</div>
+
+            <DateRangePicker className="bg-white overflow-hidden" onDateRangeChange={handleDateRangeChange} />
           </div>
 
           {/* Metrics Grid */}

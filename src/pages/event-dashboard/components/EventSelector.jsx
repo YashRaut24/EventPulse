@@ -60,9 +60,9 @@ const EventSelector = ({ events, selectedEvent, onEventChange }) => {
                 key={event.id}
                 whileHover={{ backgroundColor: 'rgba(6, 182, 212, 0.1)' }}
                 onClick={() => handleEventSelect(event.id)}
-                className="w-full p-4 text-left border-b border-white/5 last:border-b-0 transition-colors"
+                className="w-full p-4 text-left border-b border-white/5 last:border-b-0 transition-colors bg-gray-900 bg-opacity-8"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between ">
                   <div>
                     <h4 className="text-white font-medium">{event.name}</h4>
                     <p className="text-gray-300 text-sm">{event.date}</p>

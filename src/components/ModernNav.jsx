@@ -112,15 +112,15 @@ const ModernNav = ({ setShowAuthModal, isLoggedIn }) => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-black/90 backdrop-blur-lg border-t border-white/10"
+            className="md:hidden bg-black/90 backdrop-blur-lg border-t border-white/10 "
           >
-            <div className="container mx-auto px-6 py-6 space-y-3">
+            <motion.div className="container mx-auto px-6 py-6 space-y-3">
               {navItems.map((item) => (
                 <Link
                   key={item.name}
                   to={item.path}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-white hover:text-cyan-400 transition-colors duration-300 text-lg block"
+                  className="text-white hover:text-cyan-400 transition-colors duration-300 text-lg block "
                 >
                   {item.name}
                 </Link>
@@ -141,7 +141,7 @@ const ModernNav = ({ setShowAuthModal, isLoggedIn }) => {
                   </button>
                 </div>
               )}
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

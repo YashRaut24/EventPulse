@@ -292,7 +292,7 @@ const AnalyticsReports = () => {
                             {report?.downloads} downloads
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2  ">
+                        <div className="flex items-center space-x-2 absolute right-45 ">
                               <a href={`/reports/${report.reportName}`} download>
                               <Button 
                                 variant="ghost" 

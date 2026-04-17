@@ -1,40 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Icon from '../../../components/AppIcon';
 
 const SocialMediaFeed = ({ filters, onUpdateFilters }) => {
-  const [posts] = useState([
-    {
-      id: 1,
-      platform: 'Twitter',
-      author: 'Sarah Johnson',
-      username: 'sarahj_tech',
-      content: 'Just registered for Tech Conference 2024! Can\'t wait to see the latest innovations in AI and machine learning. #TechConf2024 #Innovation',
-      timestamp: '2 hours ago',
-      engagement: { likes: 45, comments: 12, shares: 8 },
-      sentiment: 'positive'
-    },
-    {
-      id: 2,
-      platform: 'LinkedIn',
-      author: 'Mike Chen',
-      username: 'mikechen_dev',
-      content: 'Looking forward to networking at Tech Conference 2024. Hope to connect with fellow developers and learn about emerging technologies.',
-      timestamp: '4 hours ago',
-      engagement: { likes: 23, comments: 7, shares: 5 },
-      sentiment: 'positive'
-    },
-    {
-      id: 3,
-      platform: 'Instagram',
-      author: 'Tech Enthusiast',
-      username: 'techlover2024',
-      content: 'The venue for Tech Conference 2024 looks amazing! Can\'t wait to share my experience.',
-      timestamp: '6 hours ago',
-      engagement: { likes: 67, comments: 15, shares: 12 },
-      sentiment: 'positive'
-    }
-  ]);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        // Determine platforms to fetch based on filters
+        let platformsToFetch = [];
+        if (filters.platforms === 'all') {
+          platformsToFetch = ['Twitter', 'Facebook', 'Instagram', 'LinkedIn'];
+        } else {
+          platformsToFetch = [filters.platforms.charAt(0).toUpperCase() + filters.platforms.slice(1)];
+        }
+
+        const response = await fetch(`/api/posts?platforms=${platformsToFetch.join(',')}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch posts');
+        }
+        const data = await response.json();
+        setPosts(data);
+      } catch (err) {
+        console.error('Error fetching posts:', err);
+        setError('Failed to load posts. Please try again.');
+        // Fallback to empty array
+        setPosts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, [filters.platforms]);
 
   const getSentimentColor = (sentiment) => {
     switch (sentiment) {

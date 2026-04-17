@@ -1,8 +1,84 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
 const InteractiveDashboard = ({ reportData }) => {
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        // Use /api/social-media-data for multiple platforms
+        const response = await fetch('http://localhost:9000/api/social-media-data?platforms=Twitter,Instagram,Facebook,LinkedIn');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch analytics data: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        // Transform multi-platform response into dashboard format
+        const transformed = {
+          likes: 0,
+          comments: 0,
+          shares: 0,
+          reach: 0,
+          engagementRate: 0,
+          platformBreakdown: {}
+        };
+        
+        // Sum up totals and map platform data
+        Object.keys(data).forEach(platform => {
+          const platformData = data[platform];
+          transformed.likes += platformData.totalLikes || 0;
+          transformed.comments += platformData.totalComments || 0;
+          transformed.shares += platformData.totalShares || 0;
+          transformed.reach += platformData.reach || 0;
+          
+          transformed.platformBreakdown[platform] = {
+            likes: platformData.totalLikes || 0,
+            comments: platformData.totalComments || 0,
+            shares: platformData.totalShares || 0,
+            reach: platformData.reach || 0
+          };
+        });
+        
+        // Calculate overall engagement rate
+        if (transformed.reach > 0) {
+          transformed.engagementRate = ((transformed.likes + transformed.comments + (transformed.shares * 2)) / transformed.reach * 100).toFixed(2);
+        }
+        
+        console.log('✅ InteractiveDashboard analytics loaded:', transformed);
+        setAnalyticsData(transformed);
+      } catch (err) {
+        console.error('❌ Analytics fetch error:', err.message);
+        // Fallback to mock data on API failure
+        setAnalyticsData({
+          likes: 1000,
+          comments: 200,
+          shares: 300,
+          reach: 400,
+          engagementRate: 25,
+          platformBreakdown: {
+            Twitter: { likes: 400, comments: 80, shares: 120, reach: 160 },
+            Instagram: { likes: 350, comments: 70, shares: 100, reach: 140 },
+            Facebook: { likes: 200, comments: 40, shares: 60, reach: 80 },
+            LinkedIn: { likes: 50, comments: 10, shares: 20, reach: 20 }
+          }
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalytics();
+
+    // Set up polling for live updates every 30 seconds
+    const interval = setInterval(fetchAnalytics, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const performanceData = [
     { month: 'Jan', engagement: 4000, reach: 24000, conversions: 240 },
     { month: 'Feb', engagement: 3000, reach: 13980, conversions: 221 },
@@ -12,7 +88,11 @@ const InteractiveDashboard = ({ reportData }) => {
     { month: 'Jun', engagement: 2390, reach: 38000, conversions: 250 }
   ];
 
-  const platformData = [
+  const platformData = analyticsData ? Object.keys(analyticsData.platformBreakdown || {}).map(platform => ({
+    name: platform,
+    value: analyticsData.platformBreakdown[platform]?.likes || 0,
+    color: platform === 'Twitter' ? '#1DA1F2' : platform === 'Instagram' ? '#E4405F' : platform === 'Facebook' ? '#1877F2' : '#0A66C2'
+  })) : [
     { name: 'Twitter', value: 35, color: '#1DA1F2' },
     { name: 'Instagram', value: 28, color: '#E4405F' },
     { name: 'Facebook', value: 22, color: '#1877F2' },

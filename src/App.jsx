@@ -20,6 +20,8 @@ import Login from './pages/login/index.jsx';
 import EventDashboard from './pages/event-dashboard/index.jsx';
 import Register from './pages/register/index.jsx';
 import AnalyticsReports from './pages/analytics-reports/index.jsx';
+import LinkedInConnect from './pages/linkedin-connect/index.jsx';
+import CompanyAnalysis from './pages/company-analysis/index.jsx';
 import NotFound from './pages/NotFound';
 import Header from "./components/ui/Header.jsx";
 function App() {
@@ -110,8 +112,8 @@ function App() {
           ) : <Navigate to="/" />
         } 
       />
-      <Route 
-        path="/event-dashboard" 
+      <Route
+        path="/event-dashboard"
         element={
           isAuthenticated ? (
             <>
@@ -119,7 +121,47 @@ function App() {
               <EventDashboard />
             </>
           ) : <Navigate to="/" />
-        } 
+        }
+      />
+      <Route
+        path="/linkedin-connect"
+        element={
+          isAuthenticated ? (
+            <>
+              <Header />
+              <LinkedInConnect />
+            </>
+          ) : <Navigate to="/" />
+        }
+      />
+      <Route
+        path="/companyAnalysis"
+        element={
+          isAuthenticated ? (
+            <>
+              <Header />
+              <CompanyAnalysis />
+            </>
+          ) : <Navigate to="/" />
+        }
+      />
+      <Route
+        path="/engagementAnalysis"
+        element={
+          isAuthenticated ? (
+            <>
+              <Header />
+              <div className="min-h-screen bg-background">
+                <main className="max-w-7xl mx-auto p-6 pt-16">
+                  <div className="bg-gray-800 bg-opacity-80 rounded-2xl p-8 shadow-md">
+                    <h1 className="text-2xl font-bold text-foreground mb-4">Engagement Analysis</h1>
+                    <p className="text-muted-foreground">Engagement analysis feature coming soon.</p>
+                  </div>
+                </main>
+              </div>
+            </>
+          ) : <Navigate to="/" />
+        }
       />
 
 

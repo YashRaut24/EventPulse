@@ -73,6 +73,11 @@ export const AuthProvider = ({ children }) => {
         const apiService = (await import('../services/api.js')).default;
         const result = await apiService.signIn(credentials);
         
+        // Store JWT token for API requests
+        if (result.token) {
+          localStorage.setItem('token', result.token);
+        }
+        
         localStorage.setItem('eventpulse_user', JSON.stringify(result.user));
         setUser(result.user);
         setIsAuthenticated(true);
@@ -119,6 +124,7 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = () => {
     localStorage.removeItem('eventpulse_user');
+    localStorage.removeItem('token');
     setUser(null);
     setIsAuthenticated(false);
   };

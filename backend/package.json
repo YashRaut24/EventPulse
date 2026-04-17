@@ -6,10 +6,13 @@
     "dev": "nodemon index.js"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "csv-parser": "^3.0.0",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "mongodb": "^6.20.0",
-    "multer": "^2.0.2"
+    "multer": "^2.0.2",
+    "my-app": "file:.."
   }
 }

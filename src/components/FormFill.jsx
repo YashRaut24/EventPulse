@@ -12,48 +12,57 @@ function FormFill(){
     });
 
     const handleSubmit = (e) => {
+        e.preventDefault();
+        // Handle form submission
     }
 
     const handleChange = (e) => {
-        console.log(e.target);
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
     }
 
     return (
         <div className="employee-data">
             <form className="form-fill" onSubmit={handleSubmit}>
-                <input 
-                    type="text" 
-                    placeholder="Name" 
-                    value={formData.name} 
-                    onChange={() => setFormData({...formData, name: e.target.value})} 
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Name"
+                    value={formData.name}
+                    onChange={handleChange}
                 />
-                <input 
-                    type="email" 
-                    placeholder="Email" 
-                    value={formData.email} 
-                    onChange={handleChange} 
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    value={formData.email}
+                    onChange={handleChange}
                 />
-                <input 
-                    type="tel" 
-                    placeholder="Phone" 
-                    value={formData.phone} 
-                    onChange={handleChange} 
+                <input
+                    type="tel"
+                    name="phone"
+                    placeholder="Phone"
+                    value={formData.phone}
+                    onChange={handleChange}
                 />
-                <textarea 
-                    placeholder="About" 
-                    value={formData.about} 
-                    onChange={handleChange} 
+                <textarea
+                    name="about"
+                    placeholder="About"
+                    value={formData.about}
+                    onChange={handleChange}
                 />
-                <input 
-                    type="text" 
-                    placeholder="Skills" 
-                    value={formData.skills} 
-                    onChange={handleChange} 
+                <input
+                    type="text"
+                    name="skills"
+                    placeholder="Skills"
+                    value={formData.skills}
+                    onChange={handleChange}
                 />
-                <textarea 
-                    placeholder="Experience" 
-                    value={formData.experience} 
-                    onChange={handleChange} 
+                <textarea
+                    name="experience"
+                    placeholder="Experience"
+                    value={formData.experience}
+                    onChange={handleChange}
                 />
                 <button type="submit">Submit</button>
             </form>

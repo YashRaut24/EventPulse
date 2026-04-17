@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { useAuth } from '../../contexts/AuthContext';
 import RegistrationHeader from './components/RegistrationHeader';
 import RegistrationForm from './components/RegistrationForm';
 import TrustSignals from './components/TrustSignals';
@@ -8,37 +10,22 @@ import LoadingOverlay from '../../components/ui/LoadingOverlay';
 
 const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const [registrationComplete, setRegistrationComplete] = useState(false);
   const [userEmail, setUserEmail] = useState('');
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
 
   const handleRegistration = async (formData) => {
     setIsLoading(true);
-    
+    setError('');
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Mock registration success
-      setUserEmail(formData?.email);
+      await signUp(formData);
+      setUserEmail(formData.email);
       setRegistrationComplete(true);
-    } catch (error) {
-      console.error('Registration failed:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleResendEmail = async () => {
-    setIsLoading(true);
-    
-    try {
-      // Simulate resend email API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Show success message or notification
-      console.log('Verification email resent');
-    } catch (error) {
-      console.error('Failed to resend email:', error);
+      setTimeout(() => navigate('/event-dashboard'), 2000);
+    } catch (err) {
+      setError(err.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -48,40 +35,33 @@ const Register = () => {
     <>
       <Helmet>
         <title>Register - EventPulse | Social Media Analytics Platform</title>
-        <meta name="description" content="Create your EventPulse account and start analyzing your event's social media performance with advanced analytics and insights." />
-        <meta name="keywords" content="event analytics, social media monitoring, event marketing, registration" />
       </Helmet>
       <div className="min-h-screen bg-background">
         <LoadingOverlay isLoading={isLoading} message="Creating your account...">
           <div className="container mx-auto px-4 py-8">
             <div className="max-w-6xl mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Main Registration Content */}
                 <div className="lg:col-span-2">
                   <div className="max-w-2xl mx-auto">
                     {!registrationComplete ? (
                       <div className="space-y-8">
                         <RegistrationHeader />
-                        
                         <div className="bg-card border border-border rounded-xl p-8 shadow-soft">
-                          <RegistrationForm 
-                            onSubmit={handleRegistration}
-                            isLoading={isLoading}
-                          />
+                          {error && (
+                            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-sm text-red-500">
+                              {error}
+                            </div>
+                          )}
+                          <RegistrationForm onSubmit={handleRegistration} isLoading={isLoading} />
                         </div>
                       </div>
                     ) : (
                       <div className="bg-card border border-border rounded-xl p-8 shadow-soft">
-                        <SuccessMessage 
-                          email={userEmail}
-                          onResendEmail={handleResendEmail}
-                        />
+                        <SuccessMessage email={userEmail} />
                       </div>
                     )}
                   </div>
                 </div>
-
-                {/* Trust Signals Sidebar */}
                 <div className="lg:col-span-1">
                   <div className="sticky top-8">
                     <TrustSignals />
@@ -91,28 +71,6 @@ const Register = () => {
             </div>
           </div>
         </LoadingOverlay>
-
-        {/* Footer */}
-        <footer className="border-t border-border bg-card">
-          <div className="container mx-auto px-4 py-6">
-            <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-              <div className="text-sm text-muted-foreground">
-                © {new Date()?.getFullYear()} EventPulse. All rights reserved.
-              </div>
-              <div className="flex items-center space-x-6 text-sm">
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-standard">
-                  Terms of Service
-                </a>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-standard">
-                  Privacy Policy
-                </a>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-standard">
-                  Support
-                </a>
-              </div>
-            </div>
-          </div>
-        </footer>
       </div>
     </>
   );

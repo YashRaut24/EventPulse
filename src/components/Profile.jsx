@@ -1,10 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { User, Mail, Phone, MapPin, Camera, Shield, Bell, Share2, Facebook, Instagram, Twitter, Settings,CheckCircle,Upload,Save,Edit3,Globe,Calendar,Users,BarChart3,Star,Award,Lock} from 'lucide-react';
 import axios from "axios";
+import { useAuth } from '../contexts/AuthContext';
 
 import './Profile.css';
 
 function Profile(){
+  const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [userRole, setUserRole] = useState('organizer'); 
   const [avatar, setAvatar] = useState();
@@ -22,6 +24,26 @@ function Profile(){
     specialties: [],
     avatar: ''
   });
+
+  // Load user data from AuthContext on mount
+  useEffect(() => {
+    if (user) {
+      setProfileData(prev => ({
+        ...prev,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        company: user.company || '',
+        location: user.location || '',
+        bio: user.bio || '',
+        website: user.website || '',
+        specialties: user.specialties || [],
+        avatar: user.profileImage || ''
+      }));
+      if (user.profileImage) setAvatar(user.profileImage);
+    }
+  }, [user]);
 
   const [notifications, setNotifications] = useState({
     eventRegistrations: true,
@@ -51,18 +73,16 @@ function Profile(){
 const handleSave = async () => {
   setIsEditing(false);
 
-  // If user typed something but didn't press Enter
   let updatedProfile = { ...profileData };
   if (newSpecialty.trim()) {
     updatedProfile.specialties = [...profileData.specialties, newSpecialty.trim()];
     setProfileData(updatedProfile);
-    setNewSpecialty(""); // clear input
+    setNewSpecialty("");
   }
 
   try {
-    const response = await axios.post("http://localhost:9000/save", updatedProfile);
-    alert("Profile Saved successfully!");
-    console.log("Saved Profile:", response.data);
+    await updateUser(updatedProfile);
+    alert("Profile saved successfully!");
   } catch (error) {
     console.error("Error saving profile:", error);
     alert("Error saving profile.");
@@ -79,15 +99,16 @@ const handleSave = async () => {
 
 const uploadAvatar = async (file) => {
   const formData = new FormData();
-  formData.append("avatar", file);
+  formData.append("file", file);
   try {
-    const res = await axios.post("http://localhost:9000/upload-avatar", formData, {
-      headers: { "Content-Type": "multipart/form-data" }
+    const token = localStorage.getItem('eventpulse_token');
+    const res = await axios.post("http://localhost:9000/api/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` }
     });
-
     const url = res.data.url;
-    setAvatar(url); 
-    setProfileData(prev => ({ ...prev, avatar: url })); 
+    setAvatar(url);
+    setProfileData(prev => ({ ...prev, avatar: url }));
+    await updateUser({ profileImage: url });
   } catch (err) {
     console.error(err);
   }

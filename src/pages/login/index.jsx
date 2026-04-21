@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import LoginForm from './components/LoginForm';
 import TrustSignals from './components/TrustSignals';
 import AuthHeader from './components/AuthHeader';
 import AuthFooter from './components/AuthFooter';
 
 const Login = () => {
+  const { signIn } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const location = useLocation();
-
-  // Mock credentials for demonstration
-  const mockCredentials = {
-    email: 'admin@eventpulse.com',
-    password: 'admin123'
-  };
 
   useEffect(() => {
     // Clear any existing error when component mounts
@@ -26,24 +22,22 @@ const Login = () => {
     setError('');
 
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Validate credentials
-      if (formData?.email === mockCredentials?.email && formData?.password === mockCredentials?.password) {
-        // Store authentication state
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('userEmail', formData?.email);
-        localStorage.setItem('rememberMe', formData?.rememberMe);
-
+      const result = await signIn({ email: formData.email, password: formData.password });
+      
+      if (result.success || result.user) {
+        // Handle rememberMe
+        if (formData.rememberMe) {
+          localStorage.setItem('rememberMe', 'true');
+        }
+        
         // Redirect to dashboard or intended page
-        const redirectTo = location?.state?.from || '/event-dashboard';
+        const redirectTo = location?.state?.from?.pathname || '/event-dashboard';
         window.location.href = redirectTo;
       } else {
-        setError('Invalid email or password. Please use admin@eventpulse.com / admin123');
+        setError(result.error || 'Login failed. Please try again.');
       }
     } catch (err) {
-      setError('Network error. Please check your connection and try again.');
+      setError(err.message || 'Network error. Please check your connection and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -71,16 +65,12 @@ const Login = () => {
           <AuthFooter />
         </div>
 
-        {/* Additional Info */}
+        {/* Demo Credentials Note */}
         <div className="mt-6 text-center">
           <div className="bg-muted/50 rounded-lg p-4">
             <p className="text-xs text-muted-foreground mb-2">
-              Demo Credentials for Testing:
+              Works with any email/password (uses fallback/demo user)
             </p>
-            <div className="space-y-1 text-xs font-mono">
-              <div>Email: admin@eventpulse.com</div>
-              <div>Password: admin123</div>
-            </div>
           </div>
         </div>
       </div>

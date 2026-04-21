@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { useAuth } from '../../contexts/AuthContext';
 import RegistrationHeader from './components/RegistrationHeader';
 import RegistrationForm from './components/RegistrationForm';
 import TrustSignals from './components/TrustSignals';
@@ -7,6 +8,7 @@ import SuccessMessage from './components/SuccessMessage';
 import LoadingOverlay from '../../components/ui/LoadingOverlay';
 
 const Register = () => {
+  const { signUp } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [registrationComplete, setRegistrationComplete] = useState(false);
   const [userEmail, setUserEmail] = useState('');
@@ -15,12 +17,21 @@ const Register = () => {
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const userData = {
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        company: formData.company
+      };
       
-      // Mock registration success
-      setUserEmail(formData?.email);
-      setRegistrationComplete(true);
+      const result = await signUp(userData);
+      
+      if (result.success || result.user) {
+        setUserEmail(formData.email);
+        setRegistrationComplete(true);
+      } else {
+        throw new Error(result.error || 'Registration failed');
+      }
     } catch (error) {
       console.error('Registration failed:', error);
     } finally {
@@ -32,11 +43,8 @@ const Register = () => {
     setIsLoading(true);
     
     try {
-      // Simulate resend email API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Show success message or notification
-      console.log('Verification email resent');
+      console.log('Verification email resent to', userEmail);
     } catch (error) {
       console.error('Failed to resend email:', error);
     } finally {

@@ -1,9 +1,17 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:9000/api';
+const API_BASE_URL = import.meta.env.VITE_BACKEND || 'http://localhost:9000/api';
+const CONNECTION_URL = import.meta.env.VITE_DATA_USER_SWISH || 'http://localhost:3000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+const connectionApi = axios.create({
+  baseURL: CONNECTION_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -171,13 +179,14 @@ async getAnalytics(platforms) {
 
 }
 
-export const getSwishStats = async (userId) => {
+export const getSwishStats = async ({email, name}) => {
   try {
-    const res = await fetch(`http://localhost:3000/api/analytics/user/${userId}`);
-    return await res.json();
+    const res = await connectionApi.post("/connect", {email, name});
+
+    return res?.data || 'No Data';
   } catch (err) {
     console.error("Error fetching Swish stats:", err);
-    return null;
+    throw new Error('Failed to fetch Swish stats');
   }
 };
 

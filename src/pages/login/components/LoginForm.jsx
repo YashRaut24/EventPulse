@@ -92,7 +92,8 @@ const LoginForm = ({ onSubmit, isLoading, error }) => {
 
         <button
           type="button"
-          onClick={() => window.location.href = '/forgot-password'}
+          // onClick={() => window.location.href = '/forgot-password'}
+          type= "submit"
           className="text-sm text-primary hover:text-primary/80 transition-standard"
         >
           Forgot password?

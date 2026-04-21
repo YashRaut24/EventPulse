@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
+import { getSwishStats } from '../services/api.js';
 
 const AuthContext = createContext();
 
@@ -10,10 +11,28 @@ export const useAuth = () => {
   return context;
 };
 
+export const useSwishStats = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useSwishStats must be used within an AuthProvider');
+  }
+  return {
+    swishStats: context.swishStats,
+    isFetching: context.isFetchingSwishStats,
+    error: context.swishStatsError,
+    refetch: context.refetchSwishStats
+  };
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  // Swish Stats states
+  const [swishStats, setSwishStats] = useState(null);
+  const [isFetchingSwishStats, setIsFetchingSwishStats] = useState(false);
+  const [swishStatsError, setSwishStatsError] = useState(null);
+  const hasFetchedSwishStats = useRef(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('eventpulse_user');
@@ -24,6 +43,29 @@ export const AuthProvider = ({ children }) => {
     }
     setLoading(false);
   }, []);
+
+  // Auto-fetch Swish stats after login/register
+  useEffect(() => {
+    if (user && !swishStats && !isFetchingSwishStats && !hasFetchedSwishStats.current) {
+      const fetchSwishStats = async () => {
+        setIsFetchingSwishStats(true);
+        setSwishStatsError(null);
+        try {
+          const name = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email;
+          const stats = await getSwishStats({ email: user.email, name });
+          setSwishStats(stats);
+          hasFetchedSwishStats.current = true;
+        } catch (error) {
+          console.error('Failed to fetch Swish stats:', error);
+          setSwishStatsError(error.message);
+        } finally {
+          setIsFetchingSwishStats(false);
+        }
+      };
+
+      fetchSwishStats();
+    }
+  }, [user, swishStats, isFetchingSwishStats]);
 
   const signUp = async (userData) => {
     try {
@@ -97,7 +139,7 @@ export const AuthProvider = ({ children }) => {
         
         const demoUser = {
           id: Date.now().toString(),
-          firstName: 'Kaivalya',
+          firstName: `${user.name}`,
           lastName: 'Sir',
           email: credentials.email,
           password: credentials.password,
@@ -148,6 +190,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const refetchSwishStats = useCallback(async () => {
+    if (!user) return;
+    hasFetchedSwishStats.current = false;
+    setSwishStats(null);
+    setSwishStatsError(null);
+    const name = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email;
+    const stats = await getSwishStats({ email: user.email, name });
+    setSwishStats(stats);
+    hasFetchedSwishStats.current = true;
+    return stats;
+  }, [user]);
+
   const value = {
     user,
     isAuthenticated,
@@ -155,7 +209,12 @@ export const AuthProvider = ({ children }) => {
     signUp,
     signIn,
     signOut,
-    updateUser
+    updateUser,
+    // Swish Stats
+    swishStats,
+    isFetchingSwishStats,
+    swishStatsError,
+    refetchSwishStats
   };
 
   return (

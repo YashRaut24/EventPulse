@@ -25,7 +25,7 @@ A modern, 3D-animated Event Management Platform with Social Media Integration
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/YashRaut24/EventPulse.git
 cd EventProject/EventPulse/my-app
 ```
 

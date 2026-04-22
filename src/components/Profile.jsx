@@ -1,8 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { User, Mail, Phone, MapPin, Camera, Shield, Bell, Share2, Facebook, Instagram, Twitter, Settings,CheckCircle,Upload,Save,Edit3,Globe,Calendar,Users,BarChart3,Star,Award,Lock} from 'lucide-react';
+<<<<<<< HEAD
 import axios from "axios";
 import { useAuth } from '../contexts/AuthContext';
 
+=======
+// import api from '../../services/api.js';\n  const apiServiceRef = useRef(null);\n\n  useEffect(() => {\n    import('../../services/api.js').then(module => {\n      apiServiceRef.current = module.default;\n    });\n  }, []);
+>>>>>>> e5c224de0f2bfac500de1c76e1b7e319fde91c1d
 import './Profile.css';
 
 function Profile(){
@@ -55,9 +59,15 @@ function Profile(){
   });
 
   const [socialAccounts, setSocialAccounts] = useState({
-    facebook: { connected: true, followers: '2.1K' },
-    instagram: { connected: true, followers: '1.8K' },
-    twitter: { connected: false, followers: '0' }
+    facebook: { connected: true, followers: 'Loading...', loading: false },
+    instagram: { connected: true, followers: 'Loading...', loading: false },
+    twitter: { connected: false, followers: 'Not connected', loading: false }
+  });
+
+  const [socialLoading, setSocialLoading] = useState({
+    facebook: false,
+    instagram: false,
+    twitter: false
   });
 
   const handleInputChange = (field, value) => {
@@ -81,23 +91,67 @@ const handleSave = async () => {
   }
 
   try {
+<<<<<<< HEAD
     await updateUser(updatedProfile);
+=======
+    // Use mock user ID - in real app, get from auth context or localStorage
+    const userId = localStorage.getItem('userId') || 'current-user';
+    await api.updateUser(userId, updatedProfile);
+>>>>>>> e5c224de0f2bfac500de1c76e1b7e319fde91c1d
     alert("Profile saved successfully!");
   } catch (error) {
     console.error("Error saving profile:", error);
-    alert("Error saving profile.");
+    alert("Error saving profile: " + (error.message || 'Unknown error'));
   }
 };
 
-
-  const connectSocialAccount = (platform) => {
+const fetchPlatformData = async (platform) => {
+  const platMap = {
+    'facebook': 'Facebook',
+    'instagram': 'Instagram',
+    'twitter': 'Twitter'
+  };
+  const apiPlatform = platMap[platform];
+  try {
+    setSocialLoading(prev => ({ ...prev, [platform]: true }));
+    const data = await api.getSocialMetrics(apiPlatform);
     setSocialAccounts(prev => ({
       ...prev,
-      [platform]: { ...prev[platform], connected: !prev[platform].connected }
+      [platform]: { 
+        ...prev[platform], 
+        followers: data.reach > 0 ? data.reach.toLocaleString() : 'No data',
+        loading: false
+      }
     }));
+  } catch (error) {
+    console.error(`Error fetching ${platform} data:`, error);
+    setSocialAccounts(prev => ({
+      ...prev,
+      [platform]: { 
+        ...prev[platform], 
+        followers: 'Error',
+        loading: false 
+      }
+    }));
+  } finally {
+    setSocialLoading(prev => ({ ...prev, [platform]: false }));
+  }
+};
+
+  const connectSocialAccount = async (platform) => {
+    const newConnected = !socialAccounts[platform].connected;
+    setSocialAccounts(prev => ({
+      ...prev,
+      [platform]: { ...prev[platform], connected: newConnected }
+    }));
+
+    if (newConnected) {
+      await fetchPlatformData(platform);
+    }
   };
 
 const uploadAvatar = async (file) => {
+<<<<<<< HEAD
   const formData = new FormData();
   formData.append("file", file);
   try {
@@ -109,8 +163,15 @@ const uploadAvatar = async (file) => {
     setAvatar(url);
     setProfileData(prev => ({ ...prev, avatar: url }));
     await updateUser({ profileImage: url });
+=======
+  try {
+    const res = await api.uploadFile(file);
+    const url = res.url || res.fileUrl || URL.createObjectURL(file);
+    setAvatar(url); 
+    setProfileData(prev => ({ ...prev, avatar: url })); 
+>>>>>>> e5c224de0f2bfac500de1c76e1b7e319fde91c1d
   } catch (err) {
-    console.error(err);
+    console.error("Upload error:", err);
   }
 };
 
@@ -124,7 +185,14 @@ const handleFileChange = (e) => {
   }
 };
 
-
+useEffect(() => {
+  // Fetch data for already connected platforms on mount
+  Object.keys(socialAccounts).forEach(platform => {
+    if (socialAccounts[platform].connected && socialAccounts[platform].followers === 'Loading...') {
+      fetchPlatformData(platform);
+    }
+  });
+}, []);
 
   return (
     <div className="profile-container">
@@ -471,7 +539,7 @@ const handleFileChange = (e) => {
                   <Twitter className="social-icon twitter" size={24} />
                   <div className="social-details">
                     <h3 className="social-name">Twitter</h3>
-                    <p className="social-followers">Not connected</p>
+                    <p className="social-followers">{socialAccounts.twitter.followers} followers</p>
                   </div>
                 </div>
                 <div className={`connection-status ${socialAccounts.twitter.connected ? 'connected' : 'disconnected'}`}></div>

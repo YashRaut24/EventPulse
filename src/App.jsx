@@ -17,7 +17,12 @@ import Login from './pages/login/index.jsx';
 import Register from './pages/register/index.jsx';
 import EventDashboard from './pages/event-dashboard/index.jsx';
 import AnalyticsReports from './pages/analytics-reports/index.jsx';
+
 import GoogleAuthCallback from './pages/auth/GoogleAuthCallback.jsx';
+
+import LinkedInConnect from './pages/linkedin-connect/index.jsx';
+import CompanyAnalysis from './pages/company-analysis/index.jsx';
+
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -39,7 +44,6 @@ function App() {
       <BrowserRouter>
         <div className="min-h-screen bg-black relative">
           <ParticleSystem />
-
           <Routes>
             {/* Public routes */}
             <Route
@@ -71,6 +75,93 @@ function App() {
                 </>
               }
             />
+
+      {/* Protected routes */}
+      <Route 
+        path="/account-settings" 
+        element={
+          isAuthenticated ? (
+            <>
+              <Header />
+              <AccountSettings />
+            </>
+          ) : <Navigate to="/" />
+        } 
+      />
+      <Route 
+        path="/social-media-monitoring" 
+        element={
+          isAuthenticated ? (
+            <>
+              <Header />
+              <SocialMediaMonitoring />
+            </>
+          ) : <Navigate to="/" />
+        } 
+      />
+      <Route 
+        path="/analytics-reports" 
+        element={
+          isAuthenticated ? (
+            <>
+              <Header />
+              <AnalyticsReports />
+            </>
+          ) : <Navigate to="/" />
+        } 
+      />
+      <Route
+        path="/event-dashboard"
+        element={
+          isAuthenticated ? (
+            <>
+              <Header />
+              <EventDashboard />
+            </>
+          ) : <Navigate to="/" />
+        }
+      />
+      <Route
+        path="/linkedin-connect"
+        element={
+          isAuthenticated ? (
+            <>
+              <Header />
+              <LinkedInConnect />
+            </>
+          ) : <Navigate to="/" />
+        }
+      />
+      <Route
+        path="/companyAnalysis"
+        element={
+          isAuthenticated ? (
+            <>
+              <Header />
+              <CompanyAnalysis />
+            </>
+          ) : <Navigate to="/" />
+        }
+      />
+      <Route
+        path="/engagementAnalysis"
+        element={
+          isAuthenticated ? (
+            <>
+              <Header />
+              <div className="min-h-screen bg-background">
+                <main className="max-w-7xl mx-auto p-6 pt-16">
+                  <div className="bg-gray-800 bg-opacity-80 rounded-2xl p-8 shadow-md">
+                    <h1 className="text-2xl font-bold text-foreground mb-4">Engagement Analysis</h1>
+                    <p className="text-muted-foreground">Engagement analysis feature coming soon.</p>
+                  </div>
+                </main>
+              </div>
+            </>
+          ) : <Navigate to="/" />
+        }
+      />
+
 
             {/* Auth pages */}
             <Route path="/login" element={isAuthenticated ? <Navigate to="/event-dashboard" /> : <Login />} />

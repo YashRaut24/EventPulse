@@ -22,14 +22,14 @@ const EventSelector = ({ events, selectedEvent, onEventChange }) => {
       >
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-white mb-1">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               {selectedEventData?.name || 'Select Event'}
             </h3>
             {selectedEventData && (
               <div className="space-y-1">
-                <p className="text-gray-300 text-sm">{selectedEventData.date}</p>
-                <p className="text-gray-400 text-xs">{selectedEventData.venue}</p>
-                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                <p className="text-sm text-muted-foreground">{selectedEventData.date}</p>
+                <p className="text-sm text-muted-foreground">{selectedEventData.venue}</p>
+                <span className={`inline-block px-2 py-1 rounded-full text-sm font-medium ${
                   selectedEventData.status === 'Active' ? 'bg-green-500/20 text-green-400' :
                   selectedEventData.status === 'Upcoming' ? 'bg-blue-500/20 text-blue-400' :
                   'bg-gray-500/20 text-gray-400'
@@ -64,11 +64,11 @@ const EventSelector = ({ events, selectedEvent, onEventChange }) => {
               >
                 <div className="flex items-center justify-between ">
                   <div>
-                    <h4 className="text-white font-medium">{event.name}</h4>
-                    <p className="text-gray-300 text-sm">{event.date}</p>
-                    <p className="text-gray-400 text-xs">{event.venue}</p>
+                    <h4 className="text-lg font-semibold text-foreground mb-2">{event.name}</h4>
+                    <p className="text-sm text-muted-foreground">{event.date}</p>
+                    <p className="text-sm text-muted-foreground">{event.venue}</p>
                   </div>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  <span className={`px-2 py-1 rounded-full text-sm font-medium ${
                     event.status === 'Active' ? 'bg-green-500/20 text-green-400' :
                     event.status === 'Upcoming' ? 'bg-blue-500/20 text-blue-400' :
                     'bg-gray-500/20 text-gray-400'

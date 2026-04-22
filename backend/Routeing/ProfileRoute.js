@@ -1,6 +1,7 @@
-const app = require("express");
-const router = app.Router();
+const express = require("express");
+const router = express.Router();
 const { MongoClient } = require("mongodb");
+const axios = require("axios");
 
 const mongoUrl = 'mongodb://localhost:27017';
 
@@ -31,6 +32,22 @@ router.post("/save", async (req, res) => {
     res.status(500).json({ error: "Failed to save profile" });
   } finally {
     await client.close();
+  }
+});
+
+router.get("/swish/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const response = await axios.get(
+      `http://localhost:3000/api/analytics/user/${userId}`
+    );
+
+    res.status(200).json(response.data);
+
+  } catch (err) {
+    console.error("Swish fetch error:", err.message);
+    res.status(500).json({ error: "Failed to fetch Swish data" });
   }
 });
 

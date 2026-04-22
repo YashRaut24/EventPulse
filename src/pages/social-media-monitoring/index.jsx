@@ -213,10 +213,11 @@ const SocialMediaMonitoring = () => {
                     <h4 className="text-sm font-medium text-foreground mb-3">Platform Status</h4>
                     <div className="space-y-2">
                       {[
-                        { name: 'Twitter', status: 'active', color: 'bg-green-500' },
+{ name: 'Twitter', status: 'active', color: 'bg-green-500' },
                         { name: 'LinkedIn', status: 'active', color: 'bg-green-500' },
                         { name: 'Instagram', status: 'active', color: 'bg-green-500' },
-                        { name: 'Facebook', status: 'limited', color: 'bg-yellow-500' }
+                        { name: 'Facebook', status: 'limited', color: 'bg-yellow-500' },
+                        { name: 'Swish', status: 'active', color: 'bg-green-500' }
                       ]?.map((platform) => (
                         <div key={platform?.name} className="flex items-center justify-between">
                           <span className="text-sm text-muted-foreground">{platform?.name}</span>

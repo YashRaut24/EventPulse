@@ -17,7 +17,7 @@ const LoginForm = ({ onSubmit, isLoading, error }) => {
     
     if (!formData?.email) {
       errors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/?.test(formData?.email)) {
+    } else if (!/\S+@\S+\.\S+/.test(formData?.email)) {
       errors.email = 'Please enter a valid email address';
     }
     
